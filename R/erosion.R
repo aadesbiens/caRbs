@@ -1,3 +1,17 @@
+#' Primary Erosion
+#'
+#' This function uses fish survey data to quantify erosion (kg/m2yr)
+#'
+#' @param TL numeric vector of individual lengths
+#' @param species character vector of species codes as per AIMS convention for each individual
+#' @param ta transect area (m2)
+#'
+#' @return erosion (kg/m2yr)
+#' @export
+#'
+#' @examples
+#'
+#'
 perosion <- function (TL, species) {
 
   thiscoef <- dplyr::inner_join(data.frame(FISH_CODE = species), pe_coefs, by = c("FISH_CODE"))
@@ -36,7 +50,7 @@ perosion <- function (TL, species) {
 
     total <- bn * bv * 0.000000001 * 1750
 
-    total_per_m <- total / 250  * (250/thiscoef$homerange)
+    total_per_m <- total / ta  * (ta/thiscoef$homerange)
 
     runs[i] <- -sum(total_per_m)
 
@@ -48,7 +62,24 @@ perosion <- function (TL, species) {
 
 }
 
+###########################################################################
 
+#' Secondary Erosion
+#'
+#' This function calculates total erosion (kg/m2yr) of all secondary (non-fish)
+#' reef components, namely, micro- and macro-borers
+#'
+#' @param cover numeric vector of percentage cover of non-coral substrate
+#' @param rug numeric vector of chain rugosity
+#' @param shelf character vector of shelf position (I = inner, M = mid-shelf, O = outer)
+#'
+#' @return erosion (kg/m2yr) for each substrate type
+#' @export
+#'
+#' @examples
+#'
+#'
+#'
 serosion <- function (cover, rug, shelf) {
 
   area <- cover * rug / 100

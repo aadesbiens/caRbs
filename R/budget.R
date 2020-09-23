@@ -1,16 +1,33 @@
-cbudget <- function(A, B, C, D) {
+#' Carbonate Budget
+#'
+#' This function combines outputs of \code{pproduction}, \code{sproduction},
+#' \code{perosion} & \code{serosion} to calculate overall carbonate budget
+#'
+#' @param pp object of class \code{carb} pertaining to primary production
+#' @param sp object of class \code{carb} pertaining to secondary production
+#' @param pe object of class \code{carb} pertaining to primary erosion
+#' @param se object of class \code{carb} pertaining to secondary erosion
+#'
+#' @return carbonate budget (net kg/m2yr)
+#' @export
+#'
+#' @examples
+#'
+#'
+#'
+cbudget <- function(pp, sp, pe, se) {
 
   qss <- function(X, n, ...) {
     dens_X <- density(X, ...)
     sample(dens_X$x, size = n, prob = dens_X$y, replace = TRUE)
   }
 
-  sample_A <- qss(A$data, n = 10000)
-  sample_B <- qss(B$data, n = 10000)
-  sample_C <- qss(C$data, n = 10000)
-  sample_D <- qss(D$data, n = 10000)
+  sample_pp <- qss(pp$data, n = 10000)
+  sample_sp <- qss(sp$data, n = 10000)
+  sample_pe <- qss(pe$data, n = 10000)
+  sample_se <- qss(se$data, n = 10000)
 
-  conv <- sample_A + sample_B + sample_C + sample_D
+  conv <- sample_pp + sample_sp + sample_pe + sample_se
 
   values <- list(est = "carbonate budget", mean = mean(conv), sd = sd(conv),  data = conv)
   class(values) <- "carb"
@@ -18,6 +35,7 @@ cbudget <- function(A, B, C, D) {
 
 }
 
+##########################################################################
 
 is.carb <- function(obj) inherits(obj, "carb")
 

@@ -1,4 +1,19 @@
-paccretion <- function(species, cover, lat) {
+#' Primary Production
+#'
+#' This function uses coral cover data to calculate carbonate production (kg/m2yr)
+#'
+#' @param species character vector of species names as per AIMS convention
+#' @param cover numeric vector of percent cover of each species
+#' @param lat numeric vector of latitude
+#'
+#' @return total production (kg/m2yr)
+#' @export
+#'
+#' @examples
+#'
+#'
+#'
+pproduction <- function(species, cover, lat) {
 
   cover <- round(cover, 0)
   lat <- round(abs(lat), 0)
@@ -16,14 +31,32 @@ paccretion <- function(species, cover, lat) {
     runs[i] <- sum(acc)
   }
 
-  values <- list(est = "primary accretion", mean = mean(runs), sd = sd(runs),  data = runs)
+  values <- list(est = "primary production", mean = mean(runs), sd = sd(runs),  data = runs)
   class(values) <- "carb"
   values
 
 }
 
+################################################################################
 
-saccretion <- function(species, cover, region, shelf) {
+#' Secondary Production
+#'
+#' This function calculates carbonate production (kg/m2yr) of all secondary
+#' (non-coral) reef components, namely, calcareous algae
+#'
+#'@param substrate character vector of algal substrate types
+#'@param cover numeric vector of percentage cover of each substrate type
+#'@param rug numeric vector of chain rugosity
+#'@param shelf character vector of shelf position (I = inner, M = mid-shelf, O = outer)
+#'
+#'@return total production (kg/m2yr)
+#'@export
+#'
+#'@examples
+#'
+#'
+#'
+sproduction <- function(species, cover, region, shelf) {
 
   thiscoef <- dplyr::inner_join(data.frame(species = species, region = region, shelf = shelf),
                                 sa_coefs, by = c("species", "region", "shelf"))
@@ -36,7 +69,7 @@ saccretion <- function(species, cover, region, shelf) {
     runs[i] <- sum(acc)
   }
 
-  values <- list(est = "secondary accretion", mean = mean(runs), sd = sd(runs),  data = runs)
+  values <- list(est = "secondary production", mean = mean(runs), sd = sd(runs),  data = runs)
   class(values) <- "carb"
   values
 
