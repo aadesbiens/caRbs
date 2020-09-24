@@ -26,6 +26,8 @@ perosion <- function (TL, species) {
     br <- (exp(thiscoef$BR_Coef_exp * TL) * thiscoef$BR_Offset_exp)
     br <- ifelse(br < 0, 0, br)
 
+    brdaily <- sapply(br, function(x) sample(seq((x - x/10), (x/10 + x), 0.0001), 365, replace = TRUE))
+
     prop <- ifelse(TL < 15 , thiscoef$P14,
                    ifelse(TL >= 15 & TL < 20, thiscoef$P15_19,
                           ifelse(TL >= 20 & TL < 25, thiscoef$P20_24,
@@ -39,7 +41,7 @@ perosion <- function (TL, species) {
       bn
     }
 
-    bn <- dailybites(maxbr = br) * prop * 365
+    bn <- colSums(dailybites(maxbr = brdaily)) * prop
 
     ba <- thiscoef$BS_Coef1 * TL  + thiscoef$BS_Offset
     ba <- ifelse(ba < 0, 0, ba)
