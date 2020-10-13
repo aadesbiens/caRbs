@@ -31,7 +31,7 @@ pproduction <- function(species, cover, lat) {
     runs[i] <- sum(acc)
   }
 
-  values <- list(est = "primary production", mean = mean(runs), sd = sd(runs),  data = runs)
+  values <- list(est = "primary production", median = median(runs), sd = sd(runs),  data = runs)
   class(values) <- "carb"
   values
 
@@ -69,7 +69,7 @@ sproduction <- function(species, cover, region, shelf) {
     runs[i] <- sum(acc)
   }
 
-  values <- list(est = "secondary production", mean = mean(runs), sd = sd(runs),  data = runs)
+  values <- list(est = "secondary production", median = median(runs), sd = sd(runs),  data = runs)
   class(values) <- "carb"
   values
 

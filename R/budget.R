@@ -29,7 +29,7 @@ cbudget <- function(pp, sp, pe, se) {
 
   conv <- sample_pp + sample_sp + sample_pe + sample_se
 
-  values <- list(est = "carbonate budget", mean = mean(conv), sd = sd(conv),  data = conv)
+  values <- list(est = "carbonate budget", median = median(conv), sd = sd(conv),  data = conv)
   class(values) <- "carb"
   values
 
@@ -40,7 +40,7 @@ cbudget <- function(pp, sp, pe, se) {
 is.carb <- function(obj) inherits(obj, "carb")
 
 summary.carb <- function(obj) {
-  tab <- cbind(obj$mean, obj$sd)
+  tab <- cbind(obj$median, obj$sd)
   colnames(tab) <- c("median", "sd")
   rownames(tab) <- c(obj$est)
   print(tab)

@@ -12,7 +12,7 @@
 #' @examples
 #'
 #'
-perosion <- function (TL, species) {
+perosion <- function (TL, species, ta) {
 
   thiscoef <- dplyr::inner_join(data.frame(FISH_CODE = species), pe_coefs, by = c("FISH_CODE"))
 
@@ -61,7 +61,7 @@ perosion <- function (TL, species) {
 
   }
 
-  values <- list(est = "primary erosion", mean = mean(runs), sd = sd(runs),  data = runs)
+  values <- list(est = "primary erosion", median = median(runs), sd = sd(runs),  data = runs)
   class(values) <- "carb"
   values
 
@@ -106,7 +106,7 @@ serosion <- function (cover, rug, shelf) {
 
   }
 
-  values <- list(est = "secondary erosion", mean = mean(runs), sd = sd(runs), data = runs)
+  values <- list(est = "secondary erosion", median = median(runs), sd = sd(runs), data = runs)
   class(values) <- "carb"
   values
 
