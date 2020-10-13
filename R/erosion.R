@@ -23,10 +23,18 @@ perosion <- function (TL, species) {
 
   for (i in 1:iters) {
 
-    br <- (exp(thiscoef$BR_Coef_exp * TL) * thiscoef$BR_Offset_exp)
-    br <- ifelse(br < 0, 0, br)
+    dailybites <- function(TL, exp, exp_sd, off, off_sd) {
 
-    brdaily <- sapply(br, function(x) sample(seq((x - x/10), (x/10 + x), 0.0001), 365, replace = TRUE))
+      br <- exp(rnorm(365, exp, exp_sd) * TL) * rnorm(365, off, off_sd)
+      br <- ifelse(br < 0, 0, br)
+
+      a <- -br / 230400
+      bn <- (a*-377353291 + (a*608400+br)*880.8) - (a*-85536000 + (a*608400+br)*360)
+
+      totalbn <- sum(bn)
+      totalbn
+
+    }
 
     prop <- ifelse(TL < 15 , thiscoef$P14,
                    ifelse(TL >= 15 & TL < 20, thiscoef$P15_19,
@@ -35,15 +43,10 @@ perosion <- function (TL, species) {
                                         ifelse(TL >= 30 & TL < 35, thiscoef$P30_34, thiscoef$P35)))))
 
 
-    dailybites <- function(maxbr) {
-      a <- -maxbr / 230400
-      bn <- (a*-377353291 + (a*608400+maxbr)*880.8) - (a*-85536000 + (a*608400+maxbr)*360)
-      bn
-    }
+    bn <- mapply(dailybites, TL, thiscoef$BR_Coef_exp, thiscoef$BR_Coef_exp_sd,
+                 thiscoef$BR_Offset_exp, thiscoef$BR_Offset_exp_sd) * prop
 
-    bn <- colSums(dailybites(maxbr = brdaily)) * prop
-
-    ba <- thiscoef$BS_Coef1 * TL  + thiscoef$BS_Offset
+    ba <- rnorm(1, thiscoef$BS_Coef1, thiscoef$BS_Coef1_sd) * TL + rnorm(1, thiscoef$BS_Offset, thiscoef$BS_Offset_sd)
     ba <- ifelse(ba < 0, 0, ba)
 
     bv <- ifelse(is.na(thiscoef$BD_Other),
@@ -58,7 +61,7 @@ perosion <- function (TL, species) {
 
   }
 
-  values <- list(est= "primary erosion", mean = mean(runs), sd = sd(runs),  data = runs)
+  values <- list(est = "primary erosion", mean = mean(runs), sd = sd(runs),  data = runs)
   class(values) <- "carb"
   values
 
