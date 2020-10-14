@@ -6,7 +6,7 @@
 #' @param species character vector of species codes as per AIMS convention for each individual
 #' @param ta transect area (m2)
 #'
-#' @return erosion (kg/m2yr)
+#' @return total primary erosion (kg/m2yr)
 #' @export
 #'
 #' @examples
@@ -78,7 +78,7 @@ perosion <- function (TL, species, ta) {
 #' @param rug numeric vector of chain rugosity
 #' @param shelf character vector of shelf position (I = inner, M = mid-shelf, O = outer)
 #'
-#' @return erosion (kg/m2yr) for each substrate type
+#' @return total secondary erosion (kg/m2yr)
 #' @export
 #'
 #' @examples

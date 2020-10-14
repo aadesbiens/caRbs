@@ -6,7 +6,7 @@
 #' @param cover numeric vector of percent cover of each species
 #' @param lat numeric vector of latitude
 #'
-#' @return total production (kg/m2yr)
+#' @return total primary production (kg/m2yr)
 #' @export
 #'
 #' @examples
@@ -49,7 +49,7 @@ pproduction <- function(species, cover, lat) {
 #'@param rug numeric vector of chain rugosity
 #'@param shelf character vector of shelf position (I = inner, M = mid-shelf, O = outer)
 #'
-#'@return total production (kg/m2yr)
+#'@return total secondary production (kg/m2yr)
 #'@export
 #'
 #'@examples
