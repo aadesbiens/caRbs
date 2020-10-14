@@ -61,7 +61,7 @@ perosion <- function (TL, species, ta) {
 
   }
 
-  values <- list(est = "primary erosion", median = median(runs), sd = sd(runs),  data = runs)
+  values <- list(est = "primary erosion", median = median(runs), sd = sd(runs),  iters = runs)
   class(values) <- "carb"
   values
 
@@ -106,7 +106,7 @@ serosion <- function (cover, rug, shelf) {
 
   }
 
-  values <- list(est = "secondary erosion", median = median(runs), sd = sd(runs), data = runs)
+  values <- list(est = "secondary erosion", median = median(runs), sd = sd(runs), iters = runs)
   class(values) <- "carb"
   values
 

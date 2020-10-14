@@ -29,7 +29,7 @@ cbudget <- function(pp, sp, pe, se) {
 
   conv <- sample_pp + sample_sp + sample_pe + sample_se
 
-  values <- list(est = "carbonate budget", median = median(conv), sd = sd(conv),  data = conv)
+  values <- list(est = "carbonate budget", median = median(conv), sd = sd(conv),  iters = conv)
   class(values) <- "carb"
   values
 
@@ -40,13 +40,21 @@ cbudget <- function(pp, sp, pe, se) {
 is.carb <- function(obj) inherits(obj, "carb")
 
 summary.carb <- function(obj) {
-  tab <- cbind(obj$median, obj$sd)
-  colnames(tab) <- c("median", "sd")
+  x <- density(obj$iters)$x
+  px <- density(obj$iters)$y
+  cpx <- cumsum(px) / sum(px)
+
+  lower_ci <- x[which(cpxx >= 0.025)[1]]
+  upper_ci <- x[which(cpxx >= 0.975)[1]-1]
+
+  tab <- cbind(obj$median, obj$sd, lower_ci, upper_ci)
+  colnames(tab) <- c("median", "sd", "lower CI", "upper CI")
   rownames(tab) <- c(obj$est)
   print(tab)
 }
 
 plot.carb <- function(obj) {
-  d <- density(obj$data)
+  d <- density(obj$iters)
   plot(d, main = paste(obj$est))
 }
+
