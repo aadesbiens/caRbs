@@ -47,10 +47,11 @@ summary.carb <- function(obj) {
   lower_ci <- x[which(cpxx >= 0.025)[1]]
   upper_ci <- x[which(cpxx >= 0.975)[1]-1]
 
-  tab <- cbind(obj$median, obj$sd, lower_ci, upper_ci)
-  colnames(tab) <- c("median", "sd", "lower CI", "upper CI")
-  rownames(tab) <- c(obj$est)
-  print(tab)
+  tab <- c(median = obj$median, sd = obj$sd,
+           lower_CI = lower_ci, upper_CI = upper_ci)
+
+  class(tab) <- c("summaryCarb", "table")
+  tab
 }
 
 plot.carb <- function(obj) {
