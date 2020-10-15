@@ -8,11 +8,7 @@
 #'
 #' @return total primary production (kg/m2yr)
 #' @export
-#'
-#' @examples
-#'
-#'
-#'
+
 pproduction <- function(species, cover, lat) {
 
   cover <- round(cover, 0)
@@ -27,11 +23,12 @@ pproduction <- function(species, cover, lat) {
   runs <- vector("numeric", iters)
 
   for (i in 1:iters) {
-    acc <- ifelse(cover <= 0, 0, rnorm(1, thiscoef$Y, thiscoef$Y.sd) * thatcoef$conv/100)
+    acc <- ifelse(cover <= 0, 0, stats::rnorm(1, thiscoef$Y, thiscoef$Y.sd) * thatcoef$conv/100)
     runs[i] <- sum(acc)
   }
 
-  values <- list(est = "primary production", median = median(runs), sd = sd(runs),  iters = runs)
+  values <- list(est = "primary production", median = stats::median(runs),
+                 sd = stats::sd(runs),  iters = runs)
   class(values) <- "carb"
   values
 
@@ -44,19 +41,16 @@ pproduction <- function(species, cover, lat) {
 #' This function calculates carbonate production (kg/m2yr) of all secondary
 #' (non-coral) reef components, namely, calcareous algae
 #'
-#'@param substrate character vector of algal substrate types
-#'@param cover numeric vector of percentage cover of each substrate type
+#'@param species character vector of algal types
+#'@param cover numeric vector of percentage cover of each algal type
 #'@param rug numeric vector of chain rugosity
-#'@param shelf character vector of shelf position (I = inner, M = mid-shelf, O = outer)
+#'@param region character vector of GBR region ("north", "central" or "south")
+#'@param shelf character vector of shelf position ("I" = inner, "M" = mid-shelf, "O" = outer)
 #'
 #'@return total secondary production (kg/m2yr)
 #'@export
-#'
-#'@examples
-#'
-#'
-#'
-sproduction <- function(species, cover, region, shelf) {
+
+sproduction <- function(species, cover, rug, region, shelf) {
 
   thiscoef <- dplyr::inner_join(data.frame(species = species, region = region, shelf = shelf),
                                 sa_coefs, by = c("species", "region", "shelf"))
@@ -65,11 +59,12 @@ sproduction <- function(species, cover, region, shelf) {
   runs <- vector("numeric", iters)
 
   for (i in 1:iters) {
-    acc <- cover * rnorm(1, thiscoef$est, thiscoef$sd)
+    acc <- cover * stats::rnorm(1, thiscoef$est, thiscoef$sd) * rug
     runs[i] <- sum(acc)
   }
 
-  values <- list(est = "secondary production", median = median(runs), sd = sd(runs),  iters = runs)
+  values <- list(est = "secondary production", median = stats::median(runs),
+                 sd = stats::sd(runs),  iters = runs)
   class(values) <- "carb"
   values
 

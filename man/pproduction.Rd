@@ -19,8 +19,3 @@ total primary production (kg/m2yr)
 \description{
 This function uses coral cover data to calculate carbonate production (kg/m2yr)
 }
-\examples{
-
-
-
-}

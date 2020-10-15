@@ -10,15 +10,11 @@
 #'
 #' @return carbonate budget (net kg/m2yr)
 #' @export
-#'
-#' @examples
-#'
-#'
-#'
+
 cbudget <- function(pp, sp, pe, se) {
 
   qss <- function(X, n, ...) {
-    dens_X <- density(X, ...)
+    dens_X <- stats::density(X, ...)
     sample(dens_X$x, size = n, prob = dens_X$y, replace = TRUE)
   }
 
@@ -29,7 +25,8 @@ cbudget <- function(pp, sp, pe, se) {
 
   conv <- sample_pp + sample_sp + sample_pe + sample_se
 
-  values <- list(est = "carbonate budget", median = median(conv), sd = sd(conv),  iters = conv)
+  values <- list(est = "carbonate budget", median = stats::median(conv),
+                 sd = stats::sd(conv),  iters = conv)
   class(values) <- "carb"
   values
 
@@ -37,25 +34,25 @@ cbudget <- function(pp, sp, pe, se) {
 
 ##########################################################################
 
-is.carb <- function(obj) inherits(obj, "carb")
-
-summary.carb <- function(obj) {
-  x <- density(obj$iters)$x
-  px <- density(obj$iters)$y
+#' @export
+summary.carb <- function(object, ...) {
+  x <- stats::density(object$iters)$x
+  px <- stats::density(object$iters)$y
   cpx <- cumsum(px) / sum(px)
 
-  lower_ci <- x[which(cpxx >= 0.025)[1]]
-  upper_ci <- x[which(cpxx >= 0.975)[1]-1]
+  lower_ci <- x[which(cpx >= 0.025)[1]]
+  upper_ci <- x[which(cpx >= 0.975)[1]-1]
 
-  tab <- c(median = obj$median, sd = obj$sd,
+  tab <- c(median = object$median, sd = object$sd,
            lower_CI = lower_ci, upper_CI = upper_ci)
 
   class(tab) <- c("summaryCarb", "table")
   tab
 }
 
-plot.carb <- function(obj, ...) {
-  d <- density(obj$iters)
-  plot(d, main = paste(obj$est), ...)
+#' @export
+plot.carb <- function(x, ...) {
+  d <- stats::density(x$iters)
+  plot(d, main = paste(x$est), ...)
 }
 

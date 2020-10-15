@@ -4,16 +4,18 @@
 \alias{sproduction}
 \title{Secondary Production}
 \usage{
-sproduction(species, cover, region, shelf)
+sproduction(species, cover, rug, region, shelf)
 }
 \arguments{
-\item{cover}{numeric vector of percentage cover of each substrate type}
+\item{species}{character vector of algal types}
 
-\item{shelf}{character vector of shelf position (I = inner, M = mid-shelf, O = outer)}
-
-\item{substrate}{character vector of algal substrate types}
+\item{cover}{numeric vector of percentage cover of each algal type}
 
 \item{rug}{numeric vector of chain rugosity}
+
+\item{region}{character vector of GBR region ("north", "central" or "south")}
+
+\item{shelf}{character vector of shelf position ("I" = inner, "M" = mid-shelf, "O" = outer)}
 }
 \value{
 total secondary production (kg/m2yr)
@@ -21,9 +23,4 @@ total secondary production (kg/m2yr)
 \description{
 This function calculates carbonate production (kg/m2yr) of all secondary
 (non-coral) reef components, namely, calcareous algae
-}
-\examples{
-
-
-
 }

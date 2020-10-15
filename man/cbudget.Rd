@@ -22,8 +22,3 @@ carbonate budget (net kg/m2yr)
 This function combines outputs of \code{pproduction}, \code{sproduction},
 \code{perosion} & \code{serosion} to calculate overall carbonate budget
 }
-\examples{
-
-
-
-}

@@ -19,7 +19,3 @@ total primary erosion (kg/m2yr)
 \description{
 This function uses fish survey data to quantify erosion (kg/m2yr)
 }
-\examples{
-
-
-}

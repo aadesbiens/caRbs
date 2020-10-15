@@ -8,10 +8,7 @@
 #'
 #' @return total primary erosion (kg/m2yr)
 #' @export
-#'
-#' @examples
-#'
-#'
+
 perosion <- function (TL, species, ta) {
 
   thiscoef <- dplyr::inner_join(data.frame(FISH_CODE = species), pe_coefs, by = c("FISH_CODE"))
@@ -25,7 +22,7 @@ perosion <- function (TL, species, ta) {
 
     dailybites <- function(TL, exp, exp_sd, off, off_sd) {
 
-      br <- exp(rnorm(365, exp, exp_sd) * TL) * rnorm(365, off, off_sd)
+      br <- exp(stats::rnorm(365, exp, exp_sd) * TL) * stats::rnorm(365, off, off_sd)
       br <- ifelse(br < 0, 0, br)
 
       a <- -br / 230400
@@ -46,7 +43,8 @@ perosion <- function (TL, species, ta) {
     bn <- mapply(dailybites, TL, thiscoef$BR_Coef_exp, thiscoef$BR_Coef_exp_sd,
                  thiscoef$BR_Offset_exp, thiscoef$BR_Offset_exp_sd) * prop
 
-    ba <- rnorm(1, thiscoef$BS_Coef1, thiscoef$BS_Coef1_sd) * TL + rnorm(1, thiscoef$BS_Offset, thiscoef$BS_Offset_sd)
+    ba <- stats::rnorm(1, thiscoef$BS_Coef1, thiscoef$BS_Coef1_sd) * TL +
+      stats::rnorm(1, thiscoef$BS_Offset, thiscoef$BS_Offset_sd)
     ba <- ifelse(ba < 0, 0, ba)
 
     bv <- ifelse(is.na(thiscoef$BD_Other),
@@ -61,7 +59,8 @@ perosion <- function (TL, species, ta) {
 
   }
 
-  values <- list(est = "primary erosion", median = median(runs), sd = sd(runs),  iters = runs)
+  values <- list(est = "primary erosion", median = stats::median(runs),
+                 sd = stats::sd(runs),  iters = runs)
   class(values) <- "carb"
   values
 
@@ -80,11 +79,7 @@ perosion <- function (TL, species, ta) {
 #'
 #' @return total secondary erosion (kg/m2yr)
 #' @export
-#'
-#' @examples
-#'
-#'
-#'
+
 serosion <- function (cover, rug, shelf) {
 
   area <- cover * rug / 100
@@ -94,19 +89,20 @@ serosion <- function (cover, rug, shelf) {
 
   for (i in 1:iters) {
 
-    micro <- ifelse(shelf == "I", abs(rnorm(1, 0.43, 0.02)) * area,
-                    ifelse(shelf == "M", abs(rnorm(1, 0.89, 0.02)) * area,
-                           abs(rnorm(1, 1.19, 0.08)) * area))
+    micro <- ifelse(shelf == "I", abs(stats::rnorm(1, 0.43, 0.02)) * area,
+                    ifelse(shelf == "M", abs(stats::rnorm(1, 0.89, 0.02)) * area,
+                           abs(stats::rnorm(1, 1.19, 0.08)) * area))
 
-    macro <- ifelse(shelf == "I", abs(rnorm(1, 1.53, 0.23)) * area ,
-                    ifelse(shelf == "M", abs(rnorm(1, 0.37, 0.16)) * area,
-                           abs(rnorm(1, 0.34, 0.05)) * area))
+    macro <- ifelse(shelf == "I", abs(stats::rnorm(1, 1.53, 0.23)) * area ,
+                    ifelse(shelf == "M", abs(stats::rnorm(1, 0.37, 0.16)) * area,
+                           abs(stats::rnorm(1, 0.34, 0.05)) * area))
 
     runs[i] <- -(micro + macro)
 
   }
 
-  values <- list(est = "secondary erosion", median = median(runs), sd = sd(runs), iters = runs)
+  values <- list(est = "secondary erosion", median = stats::median(runs),
+                 sd = stats::sd(runs), iters = runs)
   class(values) <- "carb"
   values
 

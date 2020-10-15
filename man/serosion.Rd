@@ -20,8 +20,3 @@ total secondary erosion (kg/m2yr)
 This function calculates total erosion (kg/m2yr) of all secondary (non-fish)
 reef components, namely, micro- and macro-borers
 }
-\examples{
-
-
-
-}
