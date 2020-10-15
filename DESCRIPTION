@@ -13,6 +13,7 @@ Suggests:
 RoxygenNote: 7.1.1
 Imports: 
     dplyr,
-    stats
+    stats,
+    graphics
 Depends: 
     R (>= 2.10)
