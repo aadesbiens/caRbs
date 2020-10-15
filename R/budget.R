@@ -18,10 +18,10 @@ cbudget <- function(pp, sp, pe, se) {
     sample(dens_X$x, size = n, prob = dens_X$y, replace = TRUE)
   }
 
-  sample_pp <- qss(pp$data, n = 10000)
-  sample_sp <- qss(sp$data, n = 10000)
-  sample_pe <- qss(pe$data, n = 10000)
-  sample_se <- qss(se$data, n = 10000)
+  sample_pp <- qss(pp$iters, n = 10000)
+  sample_sp <- qss(sp$iters, n = 10000)
+  sample_pe <- qss(pe$iters, n = 10000)
+  sample_se <- qss(se$iters, n = 10000)
 
   conv <- sample_pp + sample_sp + sample_pe + sample_se
 
@@ -53,7 +53,7 @@ summary.carb <- function(object, ...) {
 #' @export
 plot.carb <- function(x, ...) {
   d <- stats::density(x$iters)
-  plot(d, main = paste(x$est))
+  plot(d, main = paste(x$est), ...)
   abline(v = x$median, col = "red")
   abline(v = summary(x)[[4]], col = "blue", lty = 2)
   abline(v = summary(x)[[3]], col = "blue", lty = 2)
