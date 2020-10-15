@@ -53,7 +53,7 @@ summary.carb <- function(object, ...) {
 #' @export
 plot.carb <- function(x, ...) {
   d <- stats::density(x$iters)
-  plot(d, main = paste(x$est), ...)
+  plot(d, main = paste(x$est))
   abline(v = x$median, col = "red")
   abline(v = summary(x)[[4]], col = "blue", lty = 2)
   abline(v = summary(x)[[3]], col = "blue", lty = 2)
