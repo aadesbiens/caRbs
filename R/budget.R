@@ -54,8 +54,8 @@ summary.carb <- function(obj) {
   tab
 }
 
-plot.carb <- function(obj) {
+plot.carb <- function(obj, ...) {
   d <- density(obj$iters)
-  plot(d, main = paste(obj$est))
+  plot(d, main = paste(obj$est), ...)
 }
 
