@@ -22,8 +22,7 @@ perosion <- function (TL, species, ta) {
 
     dailybites <- function(TL, exp, exp_sd, off, off_sd) {
 
-      br <- exp(stats::rnorm(365, exp, exp_sd) * TL) * stats::rnorm(365, off, off_sd)
-      br <- ifelse(br < 0, 0, br)
+      br <- exp(-abs(stats::rnorm(365, exp, exp_sd)) * TL) * abs(stats::rnorm(365, off, off_sd))
 
       a <- -br / 230400
       bn <- (a*-377353291 + (a*608400+br)*880.8) - (a*-85536000 + (a*608400+br)*360)
@@ -43,9 +42,7 @@ perosion <- function (TL, species, ta) {
     bn <- mapply(dailybites, TL, thiscoef$BR_Coef_exp, thiscoef$BR_Coef_exp_sd,
                  thiscoef$BR_Offset_exp, thiscoef$BR_Offset_exp_sd) * prop
 
-    ba <- stats::rnorm(1, thiscoef$BS_Coef1, thiscoef$BS_Coef1_sd) * TL +
-      stats::rnorm(1, thiscoef$BS_Offset, thiscoef$BS_Offset_sd)
-    ba <- ifelse(ba < 0, 0, ba)
+    ba <- thiscoef$BS_Coef1 * TL + thiscoef$BS_Offset
 
     bv <- ifelse(is.na(thiscoef$BD_Other),
                  ((4/3) * ba * (thiscoef$BD_Offset_SCA * (TL ^ thiscoef$BD_Exp_SCA))) / 2,
@@ -53,7 +50,7 @@ perosion <- function (TL, species, ta) {
 
     total <- bn * bv * 0.000000001 * 1750
 
-    total_per_m <- total / ta  * (ta/thiscoef$homerange)
+    total_per_m <- total / ta * (ta/thiscoef$homerange)
 
     runs[i] <- -sum(total_per_m)
 

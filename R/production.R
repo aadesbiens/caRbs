@@ -23,7 +23,7 @@ pproduction <- function(species, cover, lat) {
   runs <- vector("numeric", iters)
 
   for (i in 1:iters) {
-    acc <- ifelse(cover <= 0, 0, stats::rnorm(1, thiscoef$Y, thiscoef$Y.sd) * thatcoef$conv/100)
+    acc <- ifelse(cover <= 0, 0, abs(stats::rnorm(1, thiscoef$Y, thiscoef$Y.sd)) * thatcoef$conv/100)
     runs[i] <- sum(acc)
   }
 
@@ -59,7 +59,7 @@ sproduction <- function(species, cover, rug, region, shelf) {
   runs <- vector("numeric", iters)
 
   for (i in 1:iters) {
-    acc <- cover * stats::rnorm(1, thiscoef$est, thiscoef$sd) * rug
+    acc <- cover * abs(stats::rnorm(1, thiscoef$est, thiscoef$sd)) * rug
     runs[i] <- sum(acc)
   }
 
