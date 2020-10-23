@@ -86,13 +86,13 @@ serosion <- function (cover, rug, shelf) {
 
   for (i in 1:iters) {
 
-    micro <- ifelse(shelf == "I", abs(stats::rnorm(1, 0.43, 0.02)) * area,
-                    ifelse(shelf == "M", abs(stats::rnorm(1, 0.89, 0.02)) * area,
-                           abs(stats::rnorm(1, 1.19, 0.08)) * area))
+    micro <- ifelse(shelf == "I", abs(stats::rnorm(length(area), 0.43, 0.02)) * area,
+                    ifelse(shelf == "M", abs(stats::rnorm(length(area), 0.89, 0.02)) * area,
+                           abs(stats::rnorm(length(area), 1.19, 0.08)) * area))
 
-    macro <- ifelse(shelf == "I", abs(stats::rnorm(1, 1.53, 0.23)) * area ,
-                    ifelse(shelf == "M", abs(stats::rnorm(1, 0.37, 0.16)) * area,
-                           abs(stats::rnorm(1, 0.34, 0.05)) * area))
+    macro <- ifelse(shelf == "I", abs(stats::rnorm(length(area), 1.53, 0.23)) * area ,
+                    ifelse(shelf == "M", abs(stats::rnorm(length(area), 0.37, 0.16)) * area,
+                           abs(stats::rnorm(length(area), 0.34, 0.05)) * area))
 
     runs[i] <- -(micro + macro)
 
