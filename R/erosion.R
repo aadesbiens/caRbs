@@ -42,6 +42,8 @@ perosion <- function (TL, species, ta) {
     bn <- mapply(dailybites, TL, thiscoef$BR_Coef_exp, thiscoef$BR_Coef_exp_sd,
                  thiscoef$BR_Offset_exp, thiscoef$BR_Offset_exp_sd) * prop
 
+    bn <- ifelse(thiscoef$FISH_CODE == "CHS.MICR", bn/7, bn)
+
     ba <- thiscoef$BS_Coef1 * TL + thiscoef$BS_Offset
 
     bv <- ifelse(is.na(thiscoef$BD_Other),
@@ -50,7 +52,7 @@ perosion <- function (TL, species, ta) {
 
     total <- bn * bv * 0.000000001 * 1750
 
-    total_per_m <- total / ta * (ta/thiscoef$homerange)
+    total_per_m <- total / ta
 
     runs[i] <- -sum(total_per_m)
 
