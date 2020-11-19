@@ -25,7 +25,7 @@ perosion <- function (TL, species, ta) {
       br <- exp(-abs(stats::rnorm(365, exp, exp_sd)) * TL) * abs(stats::rnorm(365, off, off_sd))
 
       a <- -br / 230400
-      bn <- (a*-377353291 + (a*608400+br)*880.8) - (a*-85536000 + (a*608400+br)*360)
+      bn <- (a*-447114806 + (a*608400+br)*1000.8) - (a*-85536000 + (a*608400+br)*360)
 
       totalbn <- sum(bn)
       totalbn
