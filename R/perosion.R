@@ -1,9 +1,41 @@
 #' Primary Erosion
 #'
-#' This function uses fish survey data to quantify erosion (kg/m2yr)
+#' This function uses fish survey data to quantify bioerosion (kg/m2yr)
 #'
-#' @param TL numeric vector of individual lengths
-#' @param species character vector of species codes as per AIMS convention for each individual
+#' This function currently supports parameterisation for 23 fish species as below:
+#'
+#' | **Species**                   | **Naming Convention** |
+#' | ----------------------------- | --------------------- |
+#' | *Bolbometopon muricatum*      | "BOL.MURI"     |
+#' | *Calotomus carolinus*         | "CAL.CARO"     |
+#' | *Cetoscarus bicolor*          | "CET.BIC"      |
+#' | *Chlorurus bleekeri*          | "CHS.BLEE"     |
+#' | *Chlorurus frontalis*         | "CHS.FRON"     |
+#' | *Chlorurus japanensis*        | "CHS.JAPA"     |
+#' | *Chlorurus mircrorhinos*      | "CHS.MICR"     |
+#' | *Chlorurus sordidus*          | "CHS.SORD"     |
+#' | *Hipposcarus longiceps*       | "HIP.LONG"     |
+#' | *Scarus altipinnis*           | "SCA.ALTI"     |
+#' | *Scarus chameleon*            | "SCA.CHAM"     |
+#' | *Scarus dimidatus*            | "SCA.DIMI"     |
+#' | *Scarus flavipectoralis*      | "SCA.FLAV"     |
+#' | *Scarus forsteni*             | "SCA.FORS"     |
+#' | *Scarus frenatus*             | "SCA.FREN"     |
+#' | *Scarus ghobban*              | "SCA.GHOB"     |
+#' | *Scarus globiceps*            | "SCA.GLOB"     |
+#' | *Scarus longipinnis*          | "SCA.LONG"     |
+#' | *Scarus niger*                | "SCA.NIGR"     |
+#' | *Scaru oviceps*               | "SCA.OVIC"     |
+#' | *Scarus psittacus*            | "SCA.PSIT"     |
+#' | *Scarus rivulatus*            | "SCA.RIVU"     |
+#' | *Scarus rubroviolaceus*       | "SCA.RUBR"     |
+#' | *Scarus schlegeli*            | "SCA.SCHL"     |
+#' | *Scarus spinus*               | "SCA.SPIN"     |
+#' | *Scarus quoyi*                | "SCA.QUO"      |
+#' @md
+#'
+#' @param TL numeric vector of individual body length (cm)
+#' @param species character vector of species codes as per the below naming convention
 #' @param ta transect area (m2)
 #'
 #' @return total primary erosion (kg/m2yr)

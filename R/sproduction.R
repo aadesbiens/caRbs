@@ -3,8 +3,18 @@
 #' This function calculates carbonate production (kg/m2yr) of all secondary
 #' (non-coral) reef components, namely, calcareous algae
 #'
-#'@param species character vector of algal types
-#'@param cover numeric vector of percentage cover of each algal type
+#' This function currently supports parameterisation of 4 calcifying algal taxa as listed below:
+#'
+#' | **Taxa**                                     | **Naming Convention**   |
+#' | -------------------------------------------- | ----------------------- |
+#' | Crustose corraline algae (*Corallinaceae*)   | "CCA" |
+#' | *Halimeda* spp                               | "Halimeda' |
+#' | Calcareous red macroalgae (*Amphiroa* spp)   | "Calcareous.Red.Macroalgae" |
+#' | *Peyssonnelia* spp                           | "Peyssonnelia" |
+#' @md
+#'
+#'@param species character vector of algal types as per the below naming convention
+#'@param cover numeric vector of percentage cover (0-100%) of each algal type
 #'@param rug numeric vector of chain rugosity
 #'@param region character vector of GBR region ("north", "central" or "south")
 #'@param shelf character vector of shelf position ("I" = inner, "M" = mid-shelf, "O" = outer)
