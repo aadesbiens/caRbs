@@ -4,7 +4,7 @@
 \alias{perosion}
 \title{Primary Erosion}
 \usage{
-perosion(TL, species, ta)
+perosion(TL, species, ta, n = 1)
 }
 \arguments{
 \item{TL}{numeric vector of individual body length (cm)}
@@ -12,6 +12,8 @@ perosion(TL, species, ta)
 \item{species}{character vector of species codes as per the below naming convention}
 
 \item{ta}{transect area (m2)}
+
+\item{n}{numeric vector of count for each \code{species} of length \code{TL} per transect area \code{ta}). Default of n = 1 for each species.}
 }
 \value{
 total primary erosion (kg/m2yr)
