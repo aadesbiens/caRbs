@@ -37,11 +37,12 @@
 #' @param TL numeric vector of individual body length (cm)
 #' @param species character vector of species codes as per the below naming convention
 #' @param ta transect area (m2)
+#' @param n numeric vector of count for each \code{species} of length \code{TL} per transect area \code{ta}). Default of n = 1.
 #'
 #' @return total primary erosion (kg/m2yr)
 #' @export
 
-perosion <- function (TL, species, ta) {
+perosion <- function (TL, species, ta, den = 1) {
 
   thiscoef <- dplyr::inner_join(data.frame(FISH_CODE = species), pe_coefs, by = c("FISH_CODE"))
 
@@ -84,7 +85,7 @@ perosion <- function (TL, species, ta) {
 
     total <- bn * bv * 0.000000001 * 1750
 
-    total_per_m <- total / ta
+    total_per_m <- total / ta * n
 
     runs[i] <- -sum(total_per_m)
 
