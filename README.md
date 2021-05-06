@@ -1,11 +1,11 @@
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
-
 # Welcome
 
 <!-- badges: start -->
 
 <!-- badges: end -->
+
+![](man/figures/caRbs_logo_2021.jpg)
 
 **This package is under active development.**
 
@@ -57,7 +57,7 @@ cov <- c(5.4, 8.2) # corresponding % cover of each species type
 x <- sproduction(
 species = alg, # character vector of all detected species
 cover = cov, # numeric vector of % cover for each species
-rug = 1.2, # chain-link rugosity of the site
+rug = 2, # visual estimate of rugosity of the site (1 - 5 ordinal scale)
 region = "north", # site region
 shelf = "O") # site shelf position
 

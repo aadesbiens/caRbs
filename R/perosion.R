@@ -37,7 +37,7 @@
 #' @param TL numeric vector of individual body length (cm)
 #' @param species character vector of species codes as per the below naming convention
 #' @param ta transect area (m2)
-#' @param n numeric vector of count for each \code{species} of length \code{TL} per transect area \code{ta}). Default of n = 1 for each species.
+#' @param n numeric vector of count for each \code{species} of length \code{TL} per transect area (\code{ta}). Default of n = 1 for each species.
 #'
 #' @return total primary erosion (kg/m2yr)
 #' @export
