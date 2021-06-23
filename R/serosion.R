@@ -4,7 +4,7 @@
 #' reef components, namely, micro- and macro-borers
 #'
 #' @param cover numeric vector of percentage cover (0-100%) of non-coral substrate
-#' @param rug numeric vector of chain rugosity
+#' @param rug habitat rugosity score (0-5)
 #' @param shelf character vector of shelf position ("I" = inner, "M" = mid-shelf, "O" = outer)
 #'
 #' @return total secondary erosion (kg/m2yr)
@@ -12,7 +12,9 @@
 
 serosion <- function (cover, rug, shelf) {
 
-  area <- cover * rug / 100
+  rug_conv <- 0.8657 + 0.1474*rug
+
+  area <- cover * rug_conv / 100
 
   iters <- 10000
   runs <- vector("numeric", iters)
