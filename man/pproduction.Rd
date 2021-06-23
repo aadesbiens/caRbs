@@ -9,7 +9,7 @@ pproduction(species, cover, lat)
 \arguments{
 \item{species}{character vector of coral types as per the below naming convention}
 
-\item{cover}{numeric vector of percent cover (0-100\%) of each coral type}
+\item{cover}{numeric vector of percent cover (0-100) of each coral type}
 
 \item{lat}{numeric vector of latitude}
 }

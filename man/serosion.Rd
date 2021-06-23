@@ -7,9 +7,9 @@
 serosion(cover, rug, shelf)
 }
 \arguments{
-\item{cover}{numeric vector of percentage cover (0-100%) of non-coral substrate}
+\item{cover}{numeric vector of percentage cover (0-100) of non-coral substrate}
 
-\item{rug}{numeric vector of chain rugosity}
+\item{rug}{habitat rugosity score (0-5)}
 
 \item{shelf}{character vector of shelf position ("I" = inner, "M" = mid-shelf, "O" = outer)}
 }

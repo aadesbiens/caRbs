@@ -9,9 +9,9 @@ sproduction(species, cover, rug, region, shelf)
 \arguments{
 \item{species}{character vector of algal types as per the below naming convention}
 
-\item{cover}{numeric vector of percentage cover (0-100\%) of each algal type}
+\item{cover}{numeric vector of percentage cover (0-100) of each algal type}
 
-\item{rug}{numeric vector of chain rugosity}
+\item{rug}{habitat rugosity score (0-5)}
 
 \item{region}{character vector of GBR region ("north", "central" or "south")}
 

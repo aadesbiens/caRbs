@@ -65,7 +65,7 @@
 #'@md
 #'
 #' @param species character vector of coral types as per the below naming convention
-#' @param cover numeric vector of percent cover (0-100%) of each coral type
+#' @param cover numeric vector of percent cover (0-100) of each coral type
 #' @param lat numeric vector of latitude
 #'
 #' @return total primary production (kg/m2yr)

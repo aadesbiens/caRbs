@@ -3,7 +3,7 @@
 #' This function calculates total erosion (kg/m2yr) of all secondary (non-fish)
 #' reef components, namely, micro- and macro-borers
 #'
-#' @param cover numeric vector of percentage cover (0-100%) of non-coral substrate
+#' @param cover numeric vector of percentage cover (0-100) of non-coral substrate
 #' @param rug habitat rugosity score (0-5)
 #' @param shelf character vector of shelf position ("I" = inner, "M" = mid-shelf, "O" = outer)
 #'

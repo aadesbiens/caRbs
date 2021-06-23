@@ -14,7 +14,7 @@
 #' @md
 #'
 #'@param species character vector of algal types as per the below naming convention
-#'@param cover numeric vector of percentage cover (0-100%) of each algal type
+#'@param cover numeric vector of percentage cover (0-100) of each algal type
 #'@param rug habitat rugosity score (0-5)
 #'@param region character vector of GBR region ("north", "central" or "south")
 #'@param shelf character vector of shelf position ("I" = inner, "M" = mid-shelf, "O" = outer)
