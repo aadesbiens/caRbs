@@ -73,7 +73,7 @@
 
 pproduction <- function(species, cover, lat) {
 
-  cover <- round(cover, 0)
+  cover <- round(cover, 1)
   lat <- round(abs(lat), 0)
 
   thiscoef <- merge(data.frame(taxa = species, X = cover), pa_coefs, by = c("taxa", "X"))
