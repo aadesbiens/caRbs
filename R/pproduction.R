@@ -76,10 +76,8 @@ pproduction <- function(species, cover, lat) {
   cover <- round(cover, 0)
   lat <- round(abs(lat), 0)
 
-  thiscoef <- dplyr::inner_join(data.frame(taxa = species, X = cover),
-                                pa_coefs, by = c("taxa", "X"))
-  thatcoef <- dplyr::inner_join(data.frame(latitude = lat),
-                                lat_coefs, by = "latitude")
+  thiscoef <- merge(data.frame(taxa = species, X = cover), pa_coefs, by = c("taxa", "X"))
+  thatcoef <- merge(data.frame(latitude = lat), lat_coefs, by = "latitude")
 
   iters <- 10000
   runs <- vector("numeric", iters)

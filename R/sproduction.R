@@ -24,7 +24,7 @@
 
 sproduction <- function(species, cover, rug, region, shelf) {
 
-  thiscoef <- dplyr::inner_join(data.frame(species = species, region = region, shelf = shelf),
+  thiscoef <- merge(data.frame(species = species, region = region, shelf = shelf),
                                 sa_coefs, by = c("species", "region", "shelf"))
 
   rug_conv <- 0.8657 + 0.1474*rug

@@ -44,7 +44,7 @@
 
 perosion <- function (TL, species, ta, n = 1) {
 
-  thiscoef <- dplyr::inner_join(data.frame(FISH_CODE = species), pe_coefs, by = c("FISH_CODE"))
+  thiscoef <- merge(data.frame(FISH_CODE = species), pe_coefs, by = c("FISH_CODE"))
 
   TL <- ifelse(TL > thiscoef$maxTL, thiscoef$maxTL, TL)
 
