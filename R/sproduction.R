@@ -33,7 +33,7 @@ sproduction <- function(species, cover, rug, region, shelf) {
   runs <- vector("numeric", iters)
 
   for (i in 1:iters) {
-    acc <- cover/100 * abs(stats::rnorm(nrow(thiscoef), thiscoef$est, thiscoef$sd)) * rug_conv
+    acc <-  abs(stats::rnorm(nrow(thiscoef), thiscoef$est*cover/100, thiscoef$sd)) * rug_conv
     runs[i] <- sum(acc)
   }
 

@@ -83,7 +83,7 @@ pproduction <- function(species, cover, lat) {
   runs <- vector("numeric", iters)
 
   for (i in 1:iters) {
-    acc <- abs(stats::rnorm(nrow(thiscoef), thiscoef$Y, thiscoef$Y.sd)) * thatcoef$conv/100
+    acc <- abs(stats::rnorm(nrow(thiscoef), thiscoef$Y, thiscoef$Y.se)) * thatcoef$conv/100
     runs[i] <- sum(acc)
   }
 
