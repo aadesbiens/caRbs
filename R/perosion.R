@@ -47,7 +47,7 @@ perosion <- function (TL, species, ta, n = 1) {
   maxTL <- unique(pe_coefs[, c("taxa", "maxTL")])
   thiscoef <- merge(data.frame(taxa = species, TL = TL), maxTL, by = c("taxa"))
   thiscoef$TL <- ifelse(thiscoef$TL > thiscoef$maxTL, thiscoef$maxTL, thiscoef$TL)
-  thiscoef <- merge(thiscoef, pe_coefs, by = c("taxa", "TL"))
+  thiscoef <- merge(thiscoef, pe_coefs, by = c("taxa", "TL", "maxTL"))
 
   iters <- 10000
   runs <- vector("numeric", iters)
