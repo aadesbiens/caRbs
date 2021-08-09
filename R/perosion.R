@@ -82,9 +82,23 @@ perosion <- function (TL, species, ta, n = 1) {
     #              ((4/3) * ba * (thiscoef$BD_Other)) / 2)
 
 
-    br <- abs(stats::rnorm(nrow(thiscoef), thiscoef$BR_Y, thiscoef$BR_Y.se))
+    dailybites <- function(Y, Ysd) {
 
-    bn <- br * thiscoef$prop * 10.68 * 365
+      br <- stats::rnorm(365, Y, Ysd)
+
+      a <- -br / 230400
+      bn <- (a*-447114806 + (a*608400+br)*1000.8) - (a*-85536000 + (a*608400+br)*360)
+
+      totalbn <- sum(bn)
+      totalbn
+
+    }
+
+    bn <- mapply(dailybites, thiscoef$BR_Y, thiscoef$BR_Y.se) * thiscoef$prop
+
+    # br <- abs(stats::rnorm(nrow(thiscoef), thiscoef$BR_Y, thiscoef$BR_Y.se))
+    # bn <- br * thiscoef$prop * 60 * 10.68 * 365
+
     bn <- ifelse(thiscoef$taxa == "CHS.MICR", bn/7, bn) #still unsure if this is staying
 
     ba <- abs(stats::rnorm(nrow(thiscoef), thiscoef$BA_Y, thiscoef$BA_Y.se))
