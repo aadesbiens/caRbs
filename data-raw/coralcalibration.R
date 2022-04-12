@@ -12,7 +12,7 @@ submassive.eq <- function(samples) {(samples*density*extension)}
 digitate.eq <- function(samples) {(samples*d.conversionfactor*extension*density) + (samples-(d.conversionfactor*samples)*0.1*extension*density)}
 branching.eq <- function(samples) {((((((radial*branchthick*density*extension)*0.1)*(axial*branchthick*density*extension))*100)/25000)*samples)}
 
-#key growth rates for each taxa
+#import data from local drive - key growth rates for each taxa
 genusgrowthforms <- read.csv("ameliadesbiens/Desktop/NESP caRbs/Data/genusgrowthforms.csv")
 
 ######################################################
@@ -20,9 +20,12 @@ genusgrowthforms <- read.csv("ameliadesbiens/Desktop/NESP caRbs/Data/genusgrowth
 
 set.seed(101)
 
+#initialise output vector
 coralequations<-vector("list",length = nrow(genusgrowthforms))
 
 for (i in 1:nrow(genusgrowthforms)) {
+
+  #assign variable from dataframe
   colony.equation <- eval(parse(text = paste(genusgrowthforms[i,2])))   # geometric formula
   d.extension <-  genusgrowthforms[i,4]                                 # extension
   d.extension.sd <-  genusgrowthforms[i,5]                              # extension SD
@@ -44,6 +47,7 @@ for (i in 1:nrow(genusgrowthforms)) {
   d.branchthick <- 1.9 # branch thickness for branching.eq
   d.branchthick.sd <- 0.2 # branch thickness SD for branching.eq
 
+  #initialise output vectors
   coral.cover<-array(NA,dim=c(nloops,1))
   CP.sum<-array(NA,dim=c(nloops,1))
   CP.density<-array(NA,dim=c(nloops,1))
@@ -137,4 +141,4 @@ df_main$Y.upper <- as.numeric(as.character(df_main$Y.upper))
 df_main$Y.lower <- as.numeric(as.character(df_main$Y.lower))
 df_main$Y.se <- as.numeric(as.character(df_main$Y.se))
 
-write.csv(df_main, "pa_coefs_FINAL.csv") #save as pa_coefs in sysdata
+write.csv(df_main, "pa_coefs.csv") #save as pa_coefs in sysdata (along with sa_coefs & lat_coefs raw data files)

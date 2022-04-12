@@ -8,7 +8,7 @@ library("tidylog", warn.conflicts = FALSE)
 ################################################
 ##BITE RATES
 
-#import data
+#import data from local drive
 biterates <- read.csv("ameliadesbiens/Desktop/NESP caRbs/Data/fish erosion/bite_rates.csv") %>%
   rename(TL = TL_cm) %>%
   filter(Species != "S. quoyi") #remove - not enough data
@@ -29,6 +29,7 @@ modbrexp <- vector("list",length(spbr)) #create empty list to fill in for loop
 modbrlm <- vector("list",length(spbr)) #as above
 AICbr <- NULL #as above
 
+#iterate across each species
 for (i in 1:length(spbr)) {
 
   #fit models
@@ -103,9 +104,10 @@ biteprop$taxa <-  recode(biteprop$Species, "bicolor" = "CET.BIC","microrhinos" =
 spbp <- unique(biteprop$taxa)
 modbp <- vector("list", length(spbp)) #initialise vector
 
+#iterate over each species
 for (i in 1:length(spbp)) {
   modbp[[i]] <- glm(scar ~ TL, data = biteprop %>%  filter(taxa == spbp[[i]]),
-                    family = binomial(link = "logit"))
+                    family = binomial(link = "logit")) #binomial regression
 }
 
 names(modbp) <- spbp
@@ -230,13 +232,14 @@ for (i in 1:length(fishequations)){
 }
 
 
-df_main <- do.call(rbind, datalist) %>% filter(!is.na(TL))
+df_main <- do.call(rbind, datalist) %>%
+  filter(!is.na(TL)) #3 species have no relationship to erosion because bite proportion is 0 - remove
 colnames(df_main) <- c("X","taxa", "Y", "Y.lower", "Y.upper", "Y.se")
 df_main <- as.data.frame(df_main)
-df_main$Y <- exp(as.numeric(as.character(df_main$Y)))
+df_main$Y <- -exp(as.numeric(as.character(df_main$Y))) #make negative because erosion not production
 df_main$X <- as.numeric(as.character(df_main$X))
-df_main$Y.upper <- exp(as.numeric(as.character(df_main$Y.upper)))
-df_main$Y.lower <- exp(as.numeric(as.character(df_main$Y.lower)))
-df_main$Y.se <- exp(as.numeric(as.character(df_main$Y.se)))
+df_main$Y.upper <- -exp(as.numeric(as.character(df_main$Y.upper)))
+df_main$Y.lower <- -exp(as.numeric(as.character(df_main$Y.lower)))
+df_main$Y.se <- -exp(as.numeric(as.character(df_main$Y.se)))
 
-write.csv(df_main, "pe_coefs_FINAL.csv") #save as pe_coefs in sysdata
+write.csv(df_main, "pe_coefs.csv") #save as pe_coefs in sysdata
