@@ -108,8 +108,8 @@ perosion <- function (TL, species, ta, n = 1) {
 #
 #     runs[i] <- -sum(total_per_m)
 
-    ero <- stats::rnorm(nrow(thiscoef), thiscoef$Y, thiscoef$Y.se) / ta * n
-    runs[i] <- sum(ero)
+    ero <- abs(stats::rnorm(nrow(thiscoef), thiscoef$Y, thiscoef$Y.se)) / ta * n
+    runs[i] <- -sum(ero)
 
   }
 
