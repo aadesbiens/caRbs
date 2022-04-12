@@ -7,7 +7,6 @@
 #' | **Species**                   | **Naming Convention** |
 #' | ----------------------------- | --------------------- |
 #' | *Bolbometopon muricatum*      | "BOL.MURI"     |
-#' | *Calotomus carolinus*         | "CAL.CARO"     |
 #' | *Cetoscarus bicolor*          | "CET.BIC"      |
 #' | *Chlorurus bleekeri*          | "CHS.BLEE"     |
 #' | *Chlorurus frontalis*         | "CHS.FRON"     |
@@ -16,7 +15,6 @@
 #' | *Chlorurus sordidus*          | "CHS.SORD"     |
 #' | *Hipposcarus longiceps*       | "HIP.LONG"     |
 #' | *Scarus altipinnis*           | "SCA.ALTI"     |
-#' | *Scarus chameleon*            | "SCA.CHAM"     |
 #' | *Scarus dimidatus*            | "SCA.DIMI"     |
 #' | *Scarus flavipectoralis*      | "SCA.FLAV"     |
 #' | *Scarus forsteni*             | "SCA.FORS"     |
@@ -31,7 +29,6 @@
 #' | *Scarus rubroviolaceus*       | "SCA.RUBR"     |
 #' | *Scarus schlegeli*            | "SCA.SCHL"     |
 #' | *Scarus spinus*               | "SCA.SPIN"     |
-#' | *Scarus quoyi*                | "SCA.QUO"      |
 #' @md
 #'
 #' @param TL numeric vector of individual body length (cm)
@@ -44,10 +41,8 @@
 
 perosion <- function (TL, species, ta, n = 1) {
 
-  maxTL <- unique(pe_coefs[, c("taxa", "maxTL")])
-  thiscoef <- merge(data.frame(taxa = species, TL = TL), maxTL, by = c("taxa"))
-  thiscoef$TL <- ifelse(thiscoef$TL > thiscoef$maxTL, thiscoef$maxTL, thiscoef$TL)
-  thiscoef <- merge(thiscoef, pe_coefs, by = c("taxa", "TL", "maxTL"))
+  TL <- round(TL, 1)
+  thiscoef <- merge(data.frame(taxa = species, X = TL), pe_coefs, by = c("taxa", "X"))
 
   iters <- 10000
   runs <- vector("numeric", iters)
@@ -81,37 +76,40 @@ perosion <- function (TL, species, ta, n = 1) {
     #              ((4/3) * ba * (thiscoef$BD_Offset_SCA * (TL ^ thiscoef$BD_Exp_SCA))) / 2,
     #              ((4/3) * ba * (thiscoef$BD_Other)) / 2)
 
+#
+#     dailybites <- function(Y, Ysd) {
+#
+#       br <- stats::rnorm(365, Y, Ysd)
+#
+#       a <- -br / 230400
+#       bn <- (a*-447114806 + (a*608400+br)*1000.8) - (a*-85536000 + (a*608400+br)*360)
+#
+#       totalbn <- sum(bn)
+#       totalbn
+#
+#     }
+#
+#     bn <- mapply(dailybites, thiscoef$BR_Y, thiscoef$BR_Y.se) * thiscoef$prop
+#
+#     # br <- abs(stats::rnorm(nrow(thiscoef), thiscoef$BR_Y, thiscoef$BR_Y.se))
+#     # bn <- br * thiscoef$prop * 60 * 10.68 * 365
+#
+#     bn <- ifelse(thiscoef$taxa == "CHS.MICR", bn/7, bn) #still unsure if this is staying
+#
+#     ba <- abs(stats::rnorm(nrow(thiscoef), thiscoef$BA_Y, thiscoef$BA_Y.se))
+#
+#     bv <- ifelse(is.na(thiscoef$BD_Other),
+#                  ((4/3) * ba * (thiscoef$BD_Offset_SCA * (thiscoef$TL ^ thiscoef$BD_Exp_SCA))) / 2,
+#                  ((4/3) * ba * (thiscoef$BD_Other)) / 2)
+#
+#     total <- bn * bv * 0.000000001 * 1750
+#
+#     total_per_m <- total / ta * n
+#
+#     runs[i] <- -sum(total_per_m)
 
-    dailybites <- function(Y, Ysd) {
-
-      br <- stats::rnorm(365, Y, Ysd)
-
-      a <- -br / 230400
-      bn <- (a*-447114806 + (a*608400+br)*1000.8) - (a*-85536000 + (a*608400+br)*360)
-
-      totalbn <- sum(bn)
-      totalbn
-
-    }
-
-    bn <- mapply(dailybites, thiscoef$BR_Y, thiscoef$BR_Y.se) * thiscoef$prop
-
-    # br <- abs(stats::rnorm(nrow(thiscoef), thiscoef$BR_Y, thiscoef$BR_Y.se))
-    # bn <- br * thiscoef$prop * 60 * 10.68 * 365
-
-    bn <- ifelse(thiscoef$taxa == "CHS.MICR", bn/7, bn) #still unsure if this is staying
-
-    ba <- abs(stats::rnorm(nrow(thiscoef), thiscoef$BA_Y, thiscoef$BA_Y.se))
-
-    bv <- ifelse(is.na(thiscoef$BD_Other),
-                 ((4/3) * ba * (thiscoef$BD_Offset_SCA * (thiscoef$TL ^ thiscoef$BD_Exp_SCA))) / 2,
-                 ((4/3) * ba * (thiscoef$BD_Other)) / 2)
-
-    total <- bn * bv * 0.000000001 * 1750
-
-    total_per_m <- total / ta * n
-
-    runs[i] <- -sum(total_per_m)
+    ero <- abs(stats::rnorm(nrow(thiscoef), thiscoef$Y, thiscoef$Y.se)) / ta * n
+    runs[i] <- sum(ero)
 
   }
 

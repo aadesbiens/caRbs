@@ -14,7 +14,203 @@ knitr::opts_chunk$set(
   comment = "#>"
 )
 ```
+# Background & Package Overview
 
-```{r setup}
-library(caRbs)
+**This package is under active development.**
+
+Coral reefs accrete expansive framework over millennia through the growth of biologically derived carbonate (Scoffin 1993; Montaggioni 2005). Scleractinian corals act as primary framework builders, with additional accretion by secondary producers such as crustose coralline algae and other calcifying algal species (Stearn et al. 1977; Hubbard et al. 1990; Scoffin 1993) The production of carbonate frameworks is balanced by erosional processes, which can be either biological, physical or chemical (Lange et al. 2020). Bioerosion (the biologically mediated removal of carbonate) occurs primary through the grazing of parrotfish and other reef organisms (e.g. urchins), and secondarily through microbioerosion (e.g. algae, fungi) and macrobiorosion (bivalves, sponges) of reef frameworks by endolithic species (Hutchings 1986; Hoey and Bellwood 2008). The net outcome of this balance is termed the “carbonate budget” (Stearn et al. 1977; Perry et al. 2018).
+
+Carbonate budgets represents a quantitative measure of the functional state of a reef at any given point in time (Lange et al. 2020). Over time, carbonate budgets can indicate the growth potential of coral reefs by quantifying whether coral reefs can build or maintain reef framework (i.e., accretional state) or carbonates are being lost from the reef framework (i.e., net erosional state). By quantifying ecosystem processes, carbonate budgets can also provide key insight into the complexity and maintenance of the reef framework (Januchowski-Hartley et al. 2017; González-Barrios and Álvarez-Filip 2018) and the provisioning of ecosystem functions such as coastal protection (e.g. Perry et al. 2018), dissipation of wave energy (e.g. Harris et al. 2018), framework for fish habitat and diversity (e.g. Alvarez-Filip et al. 2013), and sediment production for coastlines (e.g. Perry et al. 2015). 
+
+While the principle of carbonate budgets and the balance of production and erosion have remained largely unchanged since their inception (Stearn et al. 1977), carbonate budgets have been quantified using a range of different methodological approaches (Lange et al. 2020). The use of carbonate budgets to quantify ecosystem functions has grown exponentially over the past few decades and expanded to reefs throughout the world  (Lange et al. 2020), yet non-standardised approaches to quantifying carbonate budgets and differences in methodologies render comparisons between regions and among time periods problematic. To overcome this limitation, standardised census-based approaches have been successfully implemented at global scales (e.g. ReefBudget, Perry et al. 2018), which have been applied to reefs in the Caribbean (e.g. Perry et al. 2013) and more recently the Indian Ocean (e.g. Lange and Perry 2019). Existing methods have previously relied on specialized and time-intensive data collection protocols that have precluded their application in many locations. Here, we build on these approaches by developing a standardised methodology for calculating carbonate budgets (`caRbs`) that allows for site-specific conversions of standard monitoring data (coral cover, fish counts etc.) to produce estimates of net carbonate state for Pacific reefs on the Great Barrier Reef (GBR). 
+
+This package estimates the balance between growth of calcifying organisms, corals (`pproduction`) and algae (`sproduction`), and the counteractive bioerosion of fishes (`perosion`) and boring organisms (`serosion`) using census-based benthic cover and fish abundance data. Ecological processes, including 3-dimensional growth, boring, and fish grazing, are simulated across a yearly time-step to quantify total change in calcium carbonate (CaCO3) for a given site. Monte Carlo simulations are used to account for parameter uncertainty and generate probabilistic outcomes that offer nuance to the interpretation of final budget estimates (`cbudget`).
+
+
+# Installation
+
+`caRbs` is not yet available on CRAN. You can install the development version using `devtools` like so:
+
+``` r
+install.packages("devtools")
+devtools::install_github("aadesbiens/caRbs")
 ```
+
+# Usage
+
+## Primary Production
+
+`caRbs` currently supports the calculation of primary production for coral taxa categories derived from the Australian Institute of Marine Science (AIMS) Long Term Monitoring Program (LTMP) data, which includes 50 genera of scleractinian coral of which the dominant coral (Acropora) has seven distinct growth forms (56 groups total). Total primary production for a given site is calculated as the sum of percent cover ($C$) of each coral type ($i$) multiplied by their estimated calcification rate ($\beta$) at a specified latitude ($l$).
+
+$$PrimaryProduction (kg.m^{-2}.yr^{-1}) = \sum_{i = 1}^{56} \beta_{il}C_{i}$$
+
+Calcification rates of coral taxa were estimated by simulating colony growth in single species assemblages of varying size distributions across a gradient in total cover to estimate the relationship between carbonate production and gross planar coral cover. We began by defining an arbitrary available reef area of 20m x 20m (400m2) and then randomly selecting coral cover between 0 – 80%. We then generated a set of coral colonies of random size distribution whose planar area summed to the selected cover area. Maximum colony sizes for each coral taxa were determined from published literature. Species-specific extension rate and skeletal density of these colonies were randomly drawn from a normal distribution defined by a mean and standard deviation (SD). Estimates of extension rate and skeletal density for each taxa were extracted from the published literature and unpublished data for Pacific coral reefs within the same latitude as the GBR. The production of each colony is then estimated based on a geometric equation that relates 3-dimensional growth to changes in planar cover. This process was iterated 1000 times for each species to obtain a calibration curve that estimates annual carbonate production (kg m-2 yr-1) as a function of total cover. 
+
+### `pproduction` Function
+
+This function takes input data for coral species, corresponding percent cover & site latitude. Naming conventions for accepted coral categories can be found in the `pproduction` help file (i.e. `?pproduction`). These data can be called from seperate vectors or from columns within existing dataframes, as long as all inputs are of the same length (or length of 1).
+
+``` r
+library(caRbs)
+
+corspecies = c("ACB", "ACX", "ACANTHASTREA")
+corcover = c(10, 30, 2)
+lat = 14
+pp <- pproduction(species = corspecies, cover = corcover, lat = lat)
+
+plot(pp) #inspect distribution of outputs
+```
+
+## Secondary Production
+
+Four algal types are currently recognised as contributing to secondary production (crustose coralline algae, red macroalgae, Halimeda, Peyssonnelia). As with primary production, secondary production is calculated as the sum of percent cover ($A$) of each algae category ($x$) multiplied by the site-level rugosity ($R$) their calcification rate ($\alpha$) for a given region ($b$) position across the continental shelf ($v$).
+
+$$SecondaryProduction (kg.m^{-2}.yr^{-1}) = \sum_{x = 1}^{4} \alpha_{xbv}A_{x}R$$
+
+Calcification rates of algal taxa were compiled from published literature (Figure 4). Estimates of calcification for crustose coralline algae (CCA) were obtained from field experiments on the GBR (Kennedy & Diaz-Pullido, unpublished data). Rates of calcification for upright calcareous red macroalgae used data from Amphiroa from temperate eastern Australia (McCormack 2014), while for the green macroalgae Halimeda we used data from published data from the southern GBR (Castro-Sanguino et al. 2016). There are no estimates of calcification rates for Peyssonnelia in the literature, therefore we used expert opinion to estimate that calcification of this alga may be half of those of CCA as their encrusting tissues are only partially calcified. While the primary production model relies on three-dimensional models to quantify carbonate production, secondary production by calcareous algae requires estimates of rugosity to quantify the three-dimensional structure of the reef. The AIMS LTMP quantifies “substrate complexity” as the total complexity of the underlying substrate without coral structure on an ordinal scale of 0 – 5. To convert this to standard rugosity metric, i.e. the linear distance covered by a 10 m length of chain fitted to the reef contour (Risk 1972) we used a conversion between the visual assessment and rugosity, which are closely correlated (Wilson et al. 2007).
+
+### `sproduction` Function
+
+Required data formatting is consistent across functions with input values accepted from seperate vectors or called from columns within dataframes. See `?sproduction` for naming conventions of algal groups, as well as shelf and region classificiations.
+
+``` r
+spdat <- data.frame(species = c("Halimeda", "CCA"),
+                    cover = c(4, 2.5),
+                    rug = rep(2, 2),
+                    shelf = rep("outer", 2),
+                    region = rep("north", 2))
+sp <- sproduction(species = spdat$species, cover = spdat$cover, rug = spdat$rug, shelf = spdat$shelf, region = spdat$region)
+
+plot(sp) #inspect distribution of outputs
+```
+
+## Primary Erosion
+
+The bioerosive activity of 23 species of parrotfish is recognised in the `caRbs` package. See `?perosion` for supported species list and associated naming conventions. Primary bioerosion is calculated as a function of density ($F$) of each parrotfish taxa ($p$) of known length $t$ (cm) multiplied by their erosion rate $\gamma$). 
+
+$$PrimaryErosion (kg.m^{-2}.yr^{-1}) = \sum_{p = 1}^{26} \gamma_{pt}F_{pt}$$
+Parrotfish bioerosion rates were estimated as the product of species-specific feeding characteristics dependent on individual body size. Specifically, erosion of individual fish was calculated as the product of total number of bites taken, proportion of bites leaving scars, bite volume and substrate density. Each of these parameters was characterised with feeding data collected from Lizard Island (Hoey unpublished data.
+
+The total number of bites taken by in an individual was characterised in two steps. First, relationships were established between bite rate and body length for each species. Bite rate (bites per minute) as a function of body length (cm) was best characterised with exponential decay curves. Estimates of bite rates for each fish was obtained with these equations and then scaled to daily number of bites. Parrotfish feed for an average of 10.68 hours per day (~6am – 5pm, Alwany et al. 2009; Ong and Holland 2010) and bite rates vary substantially throughout this period (Alwany et al. 2009), increasing through the morning, reaching a peak around 1pm and then declining through the afternoon. This pattern can be described with a parabolic function whose vertex is defined by the maximum daily bite rate, usually occurring around 1pm (780 minutes from midnight) and its x-intercept as 5am (based on visual inspection of Alwany et al. 2009; Ong and Holland 2010). Maximum bite rate in this case is taken from the species-specific exponential decay curve. The integral of the parabolic function between the hours of 6am and 4.41pm (360 and 1000.8 minutes from midnight) then gives the total number of bites in a day.
+ 
+Total number of bites is scaled by the proportion of bites actually leaving scars, also computed as a function of body length using field data from Lizard Island. Proportion of bites leaving scars was averaged across broad size categories (10cm bins) of each species. The area of each bite, modelled as an oval shape, was also determined from field data as a function of body size. Bite volume was then calculated as half of an ellipsoid whose depth was held constant for all excavators (1.72 mm) and varied by body size for all Scarus spp. To then estimate total carbonate removal, bite volume was multiplied by substrate density, estimated as 1.75e-06 kg m^-3 (average skeletal density for coral taxa). Total contribution of parrotfish to primary bioerosion was calculated for the 24 species captured in the AIMS LTMP data.
+
+### `perosion` Function
+
+Data formatting as per previous functions. Transect area must be specified in m^2. Query `?perosion` for fish taxa naming conventions.
+
+``` r
+fishspecies <- c("CHS.SORD", "BOL.MURI")
+fishTL <- c(26, 67)
+fishn <- rep(1, 2)
+
+pe <- perosion(species = fishspecies, TL = fishTL, n = fishn, ta = 250)
+
+plot(pe) #inspect distribution of outputs
+```
+
+## Secondary Erosion
+Secondary bioerosion is calculated as a function of percent cover of available (non-coral) substrate ($S$) multiplied by bioerosion rates ($\theta$) at the micro and macro scale ($y$) for a given shelf position ($v$) and a visual assessment of rugosity ($R$).
+
+$$SecondaryErosion(kg.m^{-2}.yr^{-1}) = \sum_{y = 1}^{2} \theta_{yv}SR$$
+
+Erosion rates of micro- and macro- borers were established from published work that tracked changes in density and volume of carbonate blocks across locations of the GBR (Osorno et al. 2005; Tribollet and Golubic 2005). Microbioerosion follows a cross-shelf trend by which erosion is highest in offshore reefs, and lowest in inshore reefs, as low light levels inhibit microbioerosion in inshore environments. Macrobioerosion follows an inverse cross-shelf trend to microbioerosion, by which erosion is lowest in offshore reefs, and highest in inshore reefs, as inshore reefs have greater particulate matter for heterotrophic feeding. Combined as secondary erosion, the inverse trends in micro and macrobioerosion result in comparable erosion rates on mid-shelf and off-shelf reefs, with higher erosion on inshore reefs due to elevated macrobioerosion rates. 
+
+### `serosion` Function
+
+Cover of bare space is usually calculated as remaining available percent cover after coral and algae are accounted for. All other data specifications as above.
+
+``` r
+barecover <- 100 - sum(corcover, spdat$cover)
+
+se <- serosion(cover = barecover, shelf = "outer", rug = 2)
+
+plot(se) #inspect distribution of outputs
+```
+
+## Carbonate Budget
+
+The final `caRbs` function allows for the summation of results from individual carbonate production and erosion processes to assess net carbonate balance. Posterior probability distributions for outputs from `pproduction`, `sproduction`, `perosion` and `serosion` are combined to estimate an overall carbonate budget given the data.
+
+### `cbudget` Function
+
+The `cbudget` function accepts inputs of `class("caRbs")` generated by the previous functions. 
+
+``` r
+budget <- cbudget(pp = pp, sp = sp, pe = pe, se = se)
+plot(budget) #inspect distribution of outputs
+```
+
+# References
+Albright R, Caldeira L, Hosfelt J, Kwiatkowski L, Maclaren JK, Mason BM, Nebuchina Y, Ninokawa A, Pongratz J, Ricke KL, Rivlin T, Schneider K, Sesboüé M, Shamberger K, Silverman J, Wolfe K, Zhu K, Caldeira K (2016) Reversal of ocean acidification enhances net coral reef calcification. Nature 531:362–365 
+
+Albright R, Takeshita Y, Koweek DA, Ninokawa A, Wolfe K, Rivlin T, Nebuchina Y, Young J, Caldeira K (2018) Carbon dioxide addition to coral reef waters suppresses net community calcification. Nature 555:516–519 
+
+Alvarez-Filip L, Carricart-Ganivet JP, Horta-Puga G, Iglesias-Prieto R (2013) Shifts in coral-assemblage composition do not ensure persistence of reef functionality. Scientific Reports 3:3486 
+
+Alwany M, Thaler E, Stachowitsch M (2009) Parrotfish bioerosion on Egyptian Red Sea reefs. Journal of Experimental Marine Biology and Ecology - J EXP MAR BIOL ECOL 371:170–176 
+
+Babcock RC, Dambacher JM, Morello EB, Plagányi ÉE, Hayes KR, Sweatman HPA, Pratchett MS (2016) Assessing Different Causes of Crown-of-Thorns Starfish Outbreaks and Appropriate Responses for Management on the Great Barrier Reef. PLOS ONE 11:e0169048 
+
+Bruno JF, Selig ER (2007) Regional Decline of Coral Cover in the Indo-Pacific: Timing, Extent, and Subregional Comparisons. PLOS ONE 2:e711 
+
+Castro-Sanguino C, Lovelock C, Mumby PJ (2016) The effect of structurally complex corals and herbivory on the dynamics of Halimeda. Coral Reefs 35:597–609 
+
+Cheal AJ, MacNeil MA, Emslie MJ, Sweatman H (2017) The threat to coral reefs from more intense cyclones under climate change. Global Change Biology 23:1511–1524 
+
+De’ath G, Fabricius KE, Sweatman H, Puotinen M (2012) The 27-year decline of coral cover on the Great Barrier Reef and its causes. Proceedings of the National Academy of Sciences 109:17995–17999 
+
+Dietzel A, Bode M, Connolly SR, Hughes TP (2020) Long-term shifts in the colony size structure of coral populations along the Great Barrier Reef. Proc R Soc B 287:20201432 
+
+González-Barrios FJ, Álvarez-Filip L (2018) A framework for measuring coral species-specific contribution to reef functioning in the Caribbean. Ecological Indicators 95:877–886 
+
+Harris DL, Rovere A, Casella E, Power H, Canavesio R, Collin A, Pomeroy A, Webster JM, Parravicini V (2018) Coral reef structural complexity provides important coastal protection from waves under rising sea levels. Science Advances 4:eaao4350 
+
+Hoey AS, Bellwood DR (2008) Cross-shelf variation in the role of parrotfishes on the Great Barrier Reef. Coral Reefs 27:37–47 
+
+Hubbard DK, Miller AI, Scaturo D (1990) Production and cycling of calcium carbonate in a shelf-edge reef system (St. Croix, U.S. Virgin Islands); applications to the nature of reef systems in the fossil record. Journal of Sedimentary Research 60:335–360 
+
+Hughes TP, Kerry JT, Baird AH, Connolly SR, Dietzel A, Eakin CM, Heron SF, Hoey AS, Hoogenboom MO, Liu G, McWilliam MJ (2018) Global warming transforms coral reef assemblages. Nature 556(7702):492-6
+
+Hughes TP, Kerry JT, Connolly SR, Baird AH, Eakin CM, Heron SF, Hoey AS, Hoogenboom MO, Jacobson M, Liu G, Pratchett MS (2019) Ecological memory modifies the cumulative impact of recurrent climate extremes. Nature Climate Change 9(1):40-3
+
+Hutchings PA (1986) Biological destruction of coral reefs. Coral Reefs 4:239–252 
+
+Januchowski-Hartley FA, Graham NAJ, Wilson SK, Jennings S, Perry CT (2017) Drivers and predictions of coral reef carbonate budget trajectories. Proceedings of the Royal Society B: Biological Sciences 284:20162533 
+
+Jonker M, Johns K, Osborne K (2008) Surveys of benthic reef communities using underwater digital photography and counts. AIMS Standard Operating Procedure 85 
+
+Lange ID, Perry CT (2019) Bleaching impacts on carbonate production in the Chagos Archipelago: influence of functional coral groups on carbonate budget trajectories. Coral Reefs 38:619–624 
+
+Lange ID, Perry CT, Alvarez-Filip L (2020) Carbonate budgets as indicators of functional reef “health”: A critical review of data underpinning census-based methods and current knowledge gaps. Ecological Indicators 110:105857 
+
+MacNeil MA, Mellin C, Pratchett MS, Hoey J, Anthony KRN, Cheal AJ, Miller I, Sweatman H, Cowan ZL, Taylor S, Moon S, Fonnesbeck CJ (2016) Joint estimation of crown of thorns (Acanthaster planci) densities on the Great Barrier Reef. PeerJ 4:e2310 
+
+Mccormack S (2014) Ocean acidification, rather than elevated temperature, causes reduced growth and calcification in the geniculate coralline algae, Amphiroa anceps. University of New South Wales
+
+Mongin M, Baird ME, Tilbrook B, Matear RJ, Lenton A, Herzfeld M, Wild-Allen K, Skerratt J, Margvelashvili N, Robson BJ, Duarte CM, Gustafsson MSM, Ralph PJ, Steven ADL (2016) The exposure of the Great Barrier Reef to ocean acidification. Nature Communications 7:10732 
+
+Montaggioni LF (2005) History of Indo-Pacific coral reef systems since the last glaciation: Development patterns and controlling factors. Earth-Science Reviews 71:1–75 
+
+Ong L, Holland K (2010) Bioerosion of coral reefs by two Hawaiian parrotfishes: Species, size differences and fishery implications. Marine Biology 157:1313–1323 
+
+Osorno A, Peyrot-Clausade M, Hutchings PA (2005) Patterns and rates of erosion in dead Porites across the Great Barrier Reef (Australia) after 2 years and 4 years of exposure. Coral Reefs 24:292–303 
+
+Perry CT, Alvarez-Filip L, Graham NAJ, Mumby PJ, Wilson SK, Kench PS, Manzello DP, Morgan KM, Slangen ABA, Thomson DP, Januchowski-Hartley F, Smithers SG, Steneck RS, Carlton R, Edinger EN, Enochs IC, Estrada-Saldívar N, Haywood MDE, Kolodziej G, Murphy GN, Pérez-Cervantes E, Suchley A, Valentino L, Boenish R, Wilson M, Macdonald C (2018) Loss of coral reef growth capacity to track future increases in sea level. Nature 558:396–400 
+
+Perry CT, Kench PS, O’Leary MJ, Morgan KM, Januchowski-Hartley F (2015) Linking reef ecology to island building: Parrotfish identified as major producers of island-building sediment in the Maldives. Geology 43:503–506 
+
+Perry CT, Murphy GN, Kench PS, Smithers SG, Edinger EN, Steneck RS, Mumby PJ (2013) Caribbean-wide decline in carbonate production threatens coral reef growth. Nature Communications 4:1402 
+
+Risk MJ (1972) Fish Diversity on a Coral Reef in the Virgin Islands. 
+Scoffin TP (1993) The geological effects of hurricanes on coral reefs and the interpretation of storm deposits. Coral Reefs 12:203–221 
+
+Stearn CW, Scoffin TP, Martindale W (1977) Calcium Carbonate Budget of a Fringing Reef on the West Coast of BarbadosPart I—Zonation and Productivity. Bulletin of Marine Science 27:479–510 
+
+Taylor BM, Benkwitt CE, Choat H, Clements KD, Graham NAJ, Meekan MG (2020) Synchronous biological feedbacks in parrotfishes associated with pantropical coral bleaching. Global Change Biology 26:1285–1294 
+
+Tribollet A, Golubic S (2005) Cross-shelf differences in the pattern and pace of bioerosion of experimental carbonate substrates exposed for 3 years on the northern Great Barrier Reef, Australia. Coral Reefs 24:422–434 
+
+Uthicke S, Furnas M, Lønborg C (2014) Coral Reefs on the Edge? Carbon Chemistry on Inshore Reefs of the Great Barrier Reef. PLOS ONE 9:e109092 
+
+Wilson SK, Graham NAJ, Polunin NVC (2007) Appraisal of visual assessments of habitat complexity and benthic composition on coral reefs. Mar Biol 151:1069–1076 
