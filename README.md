@@ -40,9 +40,8 @@ devtools::install_github("aadesbiens/caRbs")
 
 ## Usage
 
-A comprehensive vignette series is forthcoming. For a quick test drive,
-try out the following code using the `sproduction` function as an
-example:
+For a quick test drive, try out the following code using the
+`sproduction` function as an example:
 
 ``` r
 library(caRbs) # load package
@@ -65,6 +64,9 @@ shelf = "O") # site shelf position
 summary(x) # view mean and standard error estimates
 plot(x) # visualise distribution of estimates
 ```
+
+For a more comprehensive run-down of the build process and usage cases
+see `vignettes("caRbs")`.
 
 ## Feedback and Contributions
 

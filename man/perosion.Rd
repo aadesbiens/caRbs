@@ -25,7 +25,6 @@ This function uses fish survey data to quantify bioerosion (kg/m2yr)
 This function currently supports parameterisation for 23 fish species as below:\tabular{ll}{
    \strong{Species} \tab \strong{Naming Convention} \cr
    \emph{Bolbometopon muricatum} \tab "BOL.MURI" \cr
-   \emph{Calotomus carolinus} \tab "CAL.CARO" \cr
    \emph{Cetoscarus bicolor} \tab "CET.BIC" \cr
    \emph{Chlorurus bleekeri} \tab "CHS.BLEE" \cr
    \emph{Chlorurus frontalis} \tab "CHS.FRON" \cr
@@ -34,7 +33,6 @@ This function currently supports parameterisation for 23 fish species as below:\
    \emph{Chlorurus sordidus} \tab "CHS.SORD" \cr
    \emph{Hipposcarus longiceps} \tab "HIP.LONG" \cr
    \emph{Scarus altipinnis} \tab "SCA.ALTI" \cr
-   \emph{Scarus chameleon} \tab "SCA.CHAM" \cr
    \emph{Scarus dimidatus} \tab "SCA.DIMI" \cr
    \emph{Scarus flavipectoralis} \tab "SCA.FLAV" \cr
    \emph{Scarus forsteni} \tab "SCA.FORS" \cr
@@ -49,6 +47,5 @@ This function currently supports parameterisation for 23 fish species as below:\
    \emph{Scarus rubroviolaceus} \tab "SCA.RUBR" \cr
    \emph{Scarus schlegeli} \tab "SCA.SCHL" \cr
    \emph{Scarus spinus} \tab "SCA.SPIN" \cr
-   \emph{Scarus quoyi} \tab "SCA.QUO" \cr
 }
 }
