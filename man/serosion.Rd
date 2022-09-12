@@ -4,12 +4,14 @@
 \alias{serosion}
 \title{Secondary Erosion}
 \usage{
-serosion(cover, rug, shelf)
+serosion(cover, rug, chain = TRUE, shelf)
 }
 \arguments{
 \item{cover}{numeric vector of percentage cover (0-100) of non-coral substrate}
 
-\item{rug}{habitat rugosity score (0-5)}
+\item{rug}{habitat rugosity (either chain-link measurement or visual 0-5 scale)}
+
+\item{chain}{logical if rugosity is chain-link, default is TRUE}
 
 \item{shelf}{character vector of shelf position ("I" = inner, "M" = mid-shelf, "O" = outer)}
 }

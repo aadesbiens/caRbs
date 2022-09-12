@@ -236,10 +236,10 @@ df_main <- do.call(rbind, datalist) %>%
   filter(!is.na(TL)) #3 species have no relationship to erosion because bite proportion is 0 - remove
 colnames(df_main) <- c("X","taxa", "Y", "Y.lower", "Y.upper", "Y.se")
 df_main <- as.data.frame(df_main)
-df_main$Y <- -exp(as.numeric(as.character(df_main$Y))) #make negative because erosion not production
+df_main$Y <- exp(as.numeric(as.character(df_main$Y)))
 df_main$X <- as.numeric(as.character(df_main$X))
-df_main$Y.upper <- -exp(as.numeric(as.character(df_main$Y.upper)))
-df_main$Y.lower <- -exp(as.numeric(as.character(df_main$Y.lower)))
-df_main$Y.se <- -exp(as.numeric(as.character(df_main$Y.se)))
+df_main$Y.upper <- exp(as.numeric(as.character(df_main$Y.upper)))
+df_main$Y.lower <- exp(as.numeric(as.character(df_main$Y.lower)))
+df_main$Y.se <- exp(as.numeric(as.character(df_main$Y.se)))
 
 write.csv(df_main, "pe_coefs.csv") #save as pe_coefs in sysdata

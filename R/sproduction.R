@@ -15,19 +15,20 @@
 #'
 #'@param species character vector of algal types as per the below naming convention
 #'@param cover numeric vector of percentage cover (0-100) of each algal type
-#'@param rug habitat rugosity score (0-5)
+#'@param rug habitat rugosity (either chain-link measurement or visual 0-5 scale)
+#'@param chain logical if rugosity is chain-link, default is TRUE
 #'@param region character vector of GBR region ("north", "central" or "south")
 #'@param shelf character vector of shelf position ("I" = inner, "M" = mid-shelf, "O" = outer)
 #'
 #'@return total secondary production (kg/m2yr)
 #'@export
 
-sproduction <- function(species, cover, rug, region, shelf) {
+sproduction <- function(species, cover, rug, chain = TRUE, region, shelf) {
 
   thiscoef <- merge(data.frame(species = species, region = region, shelf = shelf),
                                 sa_coefs, by = c("species", "region", "shelf"))
 
-  rug_conv <- 0.8657 + 0.1474*rug
+  if (chain == TRUE) rug_conv <- rug else rug_conv <- 0.8657 + 0.1474*rug
 
   iters <- 10000
   runs <- vector("numeric", iters)

@@ -3,16 +3,17 @@
 #' This function calculates total erosion (kg/m2yr) of all secondary (non-fish)
 #' reef components, namely, micro- and macro-borers
 #'
-#' @param cover numeric vector of percentage cover (0-100) of non-coral substrate
-#' @param rug habitat rugosity score (0-5)
-#' @param shelf character vector of shelf position ("I" = inner, "M" = mid-shelf, "O" = outer)
+#'@param cover numeric vector of percentage cover (0-100) of non-coral substrate
+#'@param rug habitat rugosity (either chain-link measurement or visual 0-5 scale)
+#'@param chain logical if rugosity is chain-link, default is TRUE
+#'@param shelf character vector of shelf position ("I" = inner, "M" = mid-shelf, "O" = outer)
 #'
-#' @return total secondary erosion (kg/m2yr)
-#' @export
+#'@return total secondary erosion (kg/m2yr)
+#'@export
 
-serosion <- function (cover, rug, shelf) {
+serosion <- function (cover, rug, chain = TRUE, shelf) {
 
-  rug_conv <- 0.8657 + 0.1474*rug
+  if (chain == TRUE) rug_conv <- rug else rug_conv <- 0.8657 + 0.1474*rug
 
   area <- cover * rug_conv / 100
 
