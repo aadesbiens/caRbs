@@ -28,13 +28,13 @@ sproduction <- function(species, cover, rug, chain = TRUE, region, shelf) {
   thiscoef <- merge(data.frame(species = species, region = region, shelf = shelf),
                                 sa_coefs, by = c("species", "region", "shelf"))
 
-  if (chain == TRUE) rug_conv <- rug else rug_conv <- 0.8657 + 0.1474*rug
+  if (chain == TRUE) rug_conv <- rug else rug_conv <- 0.86 + 0.15*rug
 
   iters <- 10000
   runs <- vector("numeric", iters)
 
   for (i in 1:iters) {
-    acc <-  abs(stats::rnorm(nrow(thiscoef), thiscoef$est*cover/100, thiscoef$sd)) * rug_conv
+    acc <-  abs(stats::rnorm(nrow(thiscoef), thiscoef$est, thiscoef$sd)) * rug_conv * cover/100
     runs[i] <- sum(acc)
   }
 
