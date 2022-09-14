@@ -9,7 +9,12 @@ library("tidylog", warn.conflicts = FALSE)
 ##BITE RATES
 
 #import data from local drive
-biterates <- read.csv("ameliadesbiens/Desktop/NESP caRbs/Data/fish erosion/bite_rates.csv") %>%
+biterates <- read.csv("ameliadesbiens/Desktop/caRbs/Data/fish erosion/bite_rates.csv") %>%
+  rename(TL = TL_cm) %>%
+  filter(Species != "S. quoyi") #remove - not enough data
+
+#rename species to match AIMS naming conventions
+biterates <- read.csv("Data/fish erosion/bite_rates.csv") %>%
   rename(TL = TL_cm) %>%
   filter(Species != "S. quoyi") #remove - not enough data
 
@@ -23,35 +28,24 @@ biterates$taxa <-  recode(biterates$Species, "B. muricatum" = "BOL.MURI", "C. bi
                           "S. rivulatus" = "SCA.RIVU", "S. rubroviolaceus" = "SCA.RUBR",
                           "S. schlegeli" = "SCA.SCHL", "S. spinus" = "SCA.SPIN")
 
-# Fit equations and compare AICs
+# Fit exponential function
 spbr <- unique(biterates$taxa) #extract species names
 modbrexp <- vector("list",length(spbr)) #create empty list to fill in for loop
-modbrlm <- vector("list",length(spbr)) #as above
-AICbr <- NULL #as above
 
-#iterate across each species
 for (i in 1:length(spbr)) {
 
-  #fit models
-  modbrexp[[i]] <- lm(log(bite_rate)~TL, data = biterates %>% filter(taxa == spbr[i])) #exponential fit
-  modbrlm[[i]] <- lm(bite_rate~TL, data = biterates %>% filter(taxa == spbr[i])) #linear fit
-
-  #extract AICs
-  AICbr <- rbind(AICbr, data.frame(taxa = spbr[i],
-                                   exp = extractAIC(modbrexp[[i]])[2],
-                                   lm = extractAIC(modbrlm[[i]])[2]) %>%
-                   mutate(best = names(.)[which.min(.)]))
+  #fit model to each species
+  modbrexp[[i]] <- lm(log(bite_rate)~TL, data = biterates %>% filter(taxa == spbr[i]))
 
 }
 
-AICbr ###inspect - exponential fit for all species has lower AIC
 names(modbrexp) <- spbr
 
 #########################################################
 ##BITE DIMENSIONS
 
-#redo all fit procedures with bite dimension data
-bitedimensions <- read.csv("ameliadesbiens/Desktop/NESP caRbs/Data/fish erosion/bite_dimensions.csv") %>%
+#import data from local drive
+bitedimensions <- read.csv("ameliadesbiens/Desktop/caRbs/Data/fish erosion/bite_dimensions.csv") %>%
   filter(Bite_length_mm > 0) %>%
   mutate(ellipse = pi* (Bite_length_mm/2) * (Bite_width_mm/2))  %>% #convert length x width to ellipse for area calculation
   rename(TL = TL_cm) %>%
@@ -63,32 +57,24 @@ bitedimensions$taxa <-  recode(bitedimensions$Species, "bicolor" = "CET.BIC","mi
                                "niger" = "SCA.NIGR", "oviceps" = "SCA.OVIC", "rubroviolaceus" = "SCA.RUBR",
                                "schlegeli" = "SCA.SCHL", "spinus" = "SCA.SPIN")
 
-#initialise vectors as above
+#Fit linear function
 spba <- unique(bitedimensions$taxa)
-modbaexp <- vector("list", length(spba))
-modbalm <- vector("list", length(spba))
-AICba <- NULL
+modbalm <- vector("list", length(spba)) #initialise vectors as above
 
 for (i in 1:length(spba)) {
 
-  #fit models
-  modbaexp[[i]] <- lm(log(ellipse)~TL, data = bitedimensions %>% filter(taxa == spba[i]))
-  modbalm[[i]] <- lm(ellipse~TL, data = bitedimensions %>% filter(taxa == spba[i]))
+  #fit model for each species
+  modbalm[[i]] <- lm(ellipse~0+TL, data = bitedimensions %>% filter(taxa == spba[i])) #force through 0
 
-  #compare AICs
-  AICba <- rbind(AICba, data.frame(taxa = spba[i],
-                                   exp = extractAIC(modbaexp[[i]])[2],
-                                   lm = extractAIC(modbalm[[i]])[2]) %>%
-                   mutate(best = names(.)[which.min(.)]))
 }
 
-AICba ###inspect - exponential fit for all species has lower AIC
+names(modbalm) <- spba
 
-names(modbaexp) <- spba
-
-####################################
+#################################################
 ##BITE PROPORTIONS
-biteprop <- read.csv("ameliadesbiens/Desktop/NESP caRbs/Data/fish erosion/bite_dimensions.csv") %>%
+
+#import data from local drive
+biteprop <- read.csv("ameliadesbiens/Desktop/caRbs/Data/fish erosion/bite_dimensions.csv") %>%
   mutate(scar = ifelse(Bite_length_mm > 0, 1, 0)) %>%
   rename(TL = TL_cm) %>%
   filter(!Species %in% c("bleekeri", "carolinus","chameleon", "dimidiadus",
@@ -104,20 +90,21 @@ biteprop$taxa <-  recode(biteprop$Species, "bicolor" = "CET.BIC","microrhinos" =
 spbp <- unique(biteprop$taxa)
 modbp <- vector("list", length(spbp)) #initialise vector
 
-#iterate over each species
 for (i in 1:length(spbp)) {
+
+  #fit model per species
   modbp[[i]] <- glm(scar ~ TL, data = biteprop %>%  filter(taxa == spbp[[i]]),
-                    family = binomial(link = "logit")) #binomial regression
+                    family = binomial(link = "logit"))
 }
 
 names(modbp) <- spbp
 
-#################################
+#####################################################
 #FORMAT & SAVE MODEL FITS
 
 #import maximum body length from FishBase for each species
 #dataframe also has bite depth values (extracted from literature)
-maxTL <- read.csv("ameliadesbiens/Desktop/NESP caRbs/Data/fish erosion/maxTL.csv")
+maxTL <- read.csv("Data/fish erosion/maxTL.csv")
 
 #create master list of model fits & other info for each species
 #C.frontalis, C. japanensis, S. longiceps and S.quoyi have no raw data but add to species list
@@ -155,13 +142,14 @@ speciesfits$modbp <- ifelse(speciesfits$taxa %in% c("CAL.CARO", "SCA.CHAM", "SCA
                             speciesfits$modba)
 
 
-##################################################
+##########################################################
 ####BIOEROSION SIMULATION
 
 set.seed(101)
 
 #initialise output vector of fitted models
 fishequations <- vector("list", length = nrow(speciesfits))
+fishdat <- NULL
 
 for(i in 1:nrow(speciesfits)){
 
@@ -178,8 +166,8 @@ for(i in 1:nrow(speciesfits)){
 
     #predict values w/ error based on random body lengths
     biterate <- predict(modbrexp[[speciesfits[i,6]]], newdata = tl, se.fit = TRUE)
-    bitearea <- predict(modbaexp[[speciesfits[i,7]]], newdata = tl, se.fit = TRUE)
-    biteprop <- predict(modbp[[speciesfits[i,8]]], newdata = tl, se.fit = TRUE)
+    bitearea <- predict(modbalm[[speciesfits[i,7]]], newdata = tl, se.fit = TRUE)
+    biteprop <- predict(modbp[[speciesfits[i,8]]], newdata = tl, se.fit = TRUE, type = "response") #extract probabilities
 
     if (is.na(speciesfits[i,3])) {
       bitedepth <- (speciesfits[i,5] * (tl ^ speciesfits[i,4]))[[1]]
@@ -194,21 +182,23 @@ for(i in 1:nrow(speciesfits)){
 
     for(j in 1:nloops){
 
-      br <- exp(rnorm(365, biterate$fit[j], biterate$se.fit[j])) #daily bite rate
+      #daily bite rate
+      br <- exp(rnorm(365, biterate$fit[j], biterate$se.fit[j])) #cinvert from log-scale
       a <- -br / 230400
       bn <- (a*-447114806 + (a*608400+br)*1000.8) - (a*-85536000 + (a*608400+br)*360)
 
-      bp <- rnorm(1, biteprop$fit[j], biteprop$se.fit[j])
-      totalbn <- sum(bn) * (exp(bp) / (1 + exp(bp)))
+      bp <- abs(rnorm(1, biteprop$fit[j], biteprop$se.fit[j]))
+      totalbn <- sum(bn) * bp
 
-      ba <- exp(rnorm(1, bitearea$fit[j], bitearea$se.fit[j]))
+      ba <- abs(rnorm(1, bitearea$fit[j], bitearea$se.fit[j]))
       bv <- (4/3) * ba * bitedepth[j] / 2
 
       PE.total[j,] <- totalbn * bv * sub.density
     }
 
     df <- data.frame(PE = PE.total[, 1], TL = tl$TL)
-    fishequations[[i]] <- lm(log(PE) ~ 0 + TL, data = df)
+    fishequations[[i]] <- lm(PE ~ 0 + TL + I(TL^2) + I(TL^3), data = df) #fit polynomial function
+
   }
 }
 
@@ -236,10 +226,10 @@ df_main <- do.call(rbind, datalist) %>%
   filter(!is.na(TL)) #3 species have no relationship to erosion because bite proportion is 0 - remove
 colnames(df_main) <- c("X","taxa", "Y", "Y.lower", "Y.upper", "Y.se")
 df_main <- as.data.frame(df_main)
-df_main$Y <- exp(as.numeric(as.character(df_main$Y)))
+df_main$Y <- as.numeric(as.character(df_main$Y))
 df_main$X <- as.numeric(as.character(df_main$X))
-df_main$Y.upper <- exp(as.numeric(as.character(df_main$Y.upper)))
-df_main$Y.lower <- exp(as.numeric(as.character(df_main$Y.lower)))
-df_main$Y.se <- exp(as.numeric(as.character(df_main$Y.se)))
+df_main$Y.upper <- as.numeric(as.character(df_main$Y.upper))
+df_main$Y.lower <- as.numeric(as.character(df_main$Y.lower))
+df_main$Y.se <- as.numeric(as.character(df_main$Y.se))
 
 write.csv(df_main, "pe_coefs.csv") #save as pe_coefs in sysdata
