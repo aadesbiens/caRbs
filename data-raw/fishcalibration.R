@@ -187,7 +187,7 @@ for(i in 1:nrow(speciesfits)){
       a <- -br / 230400
       bn <- (a*-447114806 + (a*608400+br)*1000.8) - (a*-85536000 + (a*608400+br)*360)
 
-      bp <- abs(rnorm(1, biteprop$fit[j], biteprop$se.fit[j]))
+      bp <- biteprop$fit[j] #no variance for bite proportion
       totalbn <- sum(bn) * bp
 
       ba <- abs(rnorm(1, bitearea$fit[j], bitearea$se.fit[j]))
